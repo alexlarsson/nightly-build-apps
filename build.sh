@@ -13,6 +13,9 @@ source "$DEFS"
 
 CHANGED=""
 
+mkdir -p dl
+cd dl
+
 for MODULE in ${!SOURCES[@]}; do
     echo ========== Updating $MODULE ================
     URL=${SOURCES[$MODULE]}
@@ -38,6 +41,8 @@ for MODULE in ${!SOURCES[@]}; do
     fi
 done
 
+cd ..
+
 if [ "x$CHANGED" == "x" -a "x$FORCE" == "x" ]; then
     echo "No changes - skipping rebuild"
     exit 0
@@ -48,6 +53,9 @@ echo "Changed modules: $CHANGED"
 rm -rf app
 xdg-app build-init app $APPID $SDK $PLATFORM $SDK_VERSION
 
+mkdir -p build
+
+cd build
 for MODULE in $MODULES; do
     echo ========== Building $MODULE ================
 
@@ -58,17 +66,18 @@ for MODULE in $MODULES; do
     if [[ "$URL" =~ ^git: ]]; then
         DIR=$BASENAME
         rm -rf $DIR
-        git clone --shared $BASENAME.git
+        git clone --shared ../dl/$BASENAME.git
     else
         DIR=${BASENAME%.tar*}
         rm -rf $DIR
-        tar xf $BASENAME
+        tar xf ../dl/$BASENAME
 
         OPT="$OPT noautogen"
     fi
 
-    xdg-app build app ./build_helper.sh "$DIR" "$OPT" "$CONFIGURE_ARGS"
+    xdg-app build ../app ../build_helper.sh "$DIR" "$OPT" "$CONFIGURE_ARGS"
 done
+cd ..
 
 echo ========== Postprocessing ================
 
