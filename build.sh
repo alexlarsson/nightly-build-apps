@@ -9,6 +9,11 @@ fi
 
 DEFS=$1
 
+declare -A OPTS
+declare -A CONFIGURE
+declare -A SOURCES
+declare -A BRANCHES
+
 source "$DEFS"
 
 CHANGED=""
@@ -19,16 +24,18 @@ cd dl
 for MODULE in ${!SOURCES[@]}; do
     echo ========== Updating $MODULE ================
     URL=${SOURCES[$MODULE]}
+    BRANCH=${BRANCHES[$MODULE]-master}
     BASENAME=`basename $URL`
     if [[ "$URL" =~ ^git: ]]; then
         if ! test -d $BASENAME.git; then
-            git clone --mirror $URL
+            git clone --mirror $URL --single-branch --branch $BRANCH
             CHANGED="$CHANGED $MODULE"
         else
             cd $BASENAME.git
-            OLD_REV=`git rev-parse master`
-            git fetch origin
-            if [ $OLD_REV != $(git rev-parse master) ]; then
+            OLD_REV=""
+            git rev-parse -q --verify refs/heads/$BRANCH && OLD_REV=`git rev-parse $BRANCH`
+            git fetch origin $BRANCH
+            if [ $OLD_REV != $(git rev-parse $BRANCH) ]; then
                 CHANGED="$CHANGED $MODULE"
             fi
             cd ..
@@ -66,7 +73,8 @@ for MODULE in $MODULES; do
     if [[ "$URL" =~ ^git: ]]; then
         DIR=$BASENAME
         rm -rf $DIR
-        git clone --shared ../dl/$BASENAME.git
+        BRANCH=${BRANCHES[$MODULE]-master}
+        git clone --shared --branch $BRANCH ../dl/$BASENAME.git
     else
         DIR=${BASENAME%.tar*}
         rm -rf $DIR
