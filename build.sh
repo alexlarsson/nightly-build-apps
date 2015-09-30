@@ -43,7 +43,7 @@ done
 
 cd ..
 
-if [ "x$CHANGED" == "x" -a "x$FORCE" == "x" ]; then
+if [ "x$CHANGED" == "x" -a "x${FORCE-}" == "x" ]; then
     echo "No changes - skipping rebuild"
     exit 0
 fi
