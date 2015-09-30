@@ -1,33 +1,8 @@
+source ./gimp.def
+
 APPID=org.gimp.GimpDevelGtk3
-SDK=org.gnome.Sdk
-PLATFORM=org.gnome.Platform
-SDK_VERSION=3.18
-
-OPTS[gexiv2]=configure
-OPTS[py2cairo]=force
-
-CONFIGURE[gexiv2]=--disable-introspection
-CONFIGURE[pygobject]=--disable-introspection
-
-SOURCES[py2cairo]="http://cairographics.org/releases/py2cairo-1.10.0.tar.bz2"
-SOURCES[pygobject]="http://ftp.gnome.org/pub/GNOME/sources/pygobject/2.28/pygobject-2.28.6.tar.xz"
-SOURCES[pygtk]="http://ftp.gnome.org/pub/GNOME/sources/pygtk/2.24/pygtk-2.24.0.tar.gz"
-SOURCES[exiv2]="http://www.exiv2.org/exiv2-0.25.tar.gz"
-SOURCES[gexiv2]="git://git.gnome.org/gexiv2"
-SOURCES[babl]="git://git.gnome.org/babl"
-SOURCES[gegl]="git://git.gnome.org/gegl"
-SOURCES[gimp]="git://git.gnome.org/gimp"
 
 BRANCHES[gimp]="gtk3-port"
 
-MODULES="py2cairo pygobject pygtk exiv2 gexiv2 babl gegl gimp"
-CLEANUP_FILES="/app/lib/pygtk/2.0/demos"
-
-# TODO:
-# gegl - no openEXR, no libRAW, no jasper, spiro...
-# (lt-operation_reference:2852): GEGL-display.c-WARNING **: No display handler operation found for gegl:display
-
-DESKTOP_FILE=gimp.desktop
-ICON_FILE=gimp.png
 DESKTOP_NAME_PREFIX="(Nightly gtk3) "
 COMMAND=gimp-2.99
