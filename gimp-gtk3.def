@@ -21,6 +21,7 @@ SOURCES[gimp]="git://git.gnome.org/gimp"
 BRANCHES[gimp]="gtk3-port"
 
 MODULES="py2cairo pygobject pygtk exiv2 gexiv2 babl gegl gimp"
+CLEANUP_FILES="/app/lib/pygtk/2.0/demos"
 
 # TODO:
 # gegl - no openEXR, no libRAW, no jasper, spiro...

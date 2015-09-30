@@ -90,6 +90,17 @@ cd ..
 echo ========== Postprocessing ================
 
 xdg-app build app rm -rf /app/include
+xdg-app build app rm -rf /app/lib/pkgconfig
+xdg-app build app rm -rf /app/share/pkgconfig
+xdg-app build app rm -rf /app/share/aclocal
+xdg-app build app rm -rf /app/share/gtk-doc
+xdg-app build app rm -rf /app/share/man
+xdg-app build app rm -rf /app/share/vala/vapi
+xdg-app build app bash -c "find /app/lib -name *.a | xargs rm"
+xdg-app build app bash -c "find /app -name *.la | xargs rm"
+xdg-app build app bash -c "find /app -name *.pyo | xargs rm"
+xdg-app build app bash -c "find /app -name *.pyc | xargs rm"
+
 xdg-app build app bash -c "find /app -type f | xargs file | grep ELF | grep 'not stripped' | cut -d: -f1 | xargs -r -n 1 strip"
 if [ "x${DESKTOP_FILE-}" != x ]; then
     xdg-app build app mv /app/share/applications/${DESKTOP_FILE} /app/share/applications/${APPID}.desktop
@@ -103,6 +114,9 @@ fi
 if [ "x${ICON_FILE-}" != x ]; then
     xdg-app build app bash -c "for i in \`find /app/share/icons -name ${ICON_FILE}\`; do mv \$i \`dirname \$i\`/${APPID}.png; done"
     xdg-app build app sed -i "s/Icon=.*/Icon=${APPID}/" /app/share/applications/${APPID}.desktop
+fi
+if [ "x${CLEANUP_FILES-}" != x ]; then
+    xdg-app build app rm -rf ${CLEANUP_FILES-}
 fi
 xdg-app build-finish --command=$COMMAND --share=ipc --socket=x11 --socket=pulseaudio --filesystem=host  app
 xdg-app build-export repo app
