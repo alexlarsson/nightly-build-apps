@@ -30,6 +30,7 @@ mkdir -p cache
 cd dl
 
 STARTAT=""
+BODY=""
 
 for MODULE in $MODULES; do
     echo ========== Updating $MODULE ================
@@ -40,21 +41,27 @@ for MODULE in $MODULES; do
         if ! test -d $BASENAME.git; then
             git clone --mirror $URL --single-branch --branch $BRANCH
             CHANGED="$CHANGED $MODULE"
+            cd $BASENAME.git
+            REV=$(git rev-parse $BRANCH)
+            cd ..
         else
             cd $BASENAME.git
             OLD_REV=""
             git rev-parse -q --verify refs/heads/$BRANCH && OLD_REV=`git rev-parse $BRANCH`
             git fetch origin $BRANCH
-            if [ $OLD_REV != $(git rev-parse $BRANCH) ]; then
+            REV=$(git rev-parse $BRANCH)
+            if [ $OLD_REV != $REV ]; then
                 CHANGED="$CHANGED $MODULE"
             fi
             cd ..
         fi
+        BODY="$BODY$MODULE: $URL $REV"$'\n'
     else
         if ! test -f $BASENAME ; then
             curl -O $URL
             CHANGED="$CHANGED $MODULE"
         fi
+        BODY="$BODY$MODULE: $URL"$'\n'
     fi
 
     # If anything changed in this module or before, blow away any caches
@@ -153,4 +160,4 @@ if [ "x${CLEANUP_FILES-}" != x ]; then
     xdg-app build app rm -rf ${CLEANUP_FILES-}
 fi
 xdg-app build-finish --command=$COMMAND --share=ipc --socket=x11 --socket=pulseaudio --filesystem=host  app
-xdg-app build-export repo app
+xdg-app build-export --subject="Nightly build of ${APPID}, `date`" --body="$BODY" repo app
