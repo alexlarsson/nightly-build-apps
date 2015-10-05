@@ -3,6 +3,13 @@
 set -o nounset
 set -o errexit
 
+contains() {
+  for word in $1; do
+    [[ "$word" = "$2" ]] && return 0
+  done
+  return 1
+}
+
 if [ "$#" -ne 1 ]; then
     echo "Missing def file"
 fi
@@ -19,9 +26,12 @@ source "$DEFS"
 CHANGED=""
 
 mkdir -p dl
+mkdir -p cache
 cd dl
 
-for MODULE in ${!SOURCES[@]}; do
+STARTAT=""
+
+for MODULE in $MODULES; do
     echo ========== Updating $MODULE ================
     URL=${SOURCES[$MODULE]}
     BRANCH=${BRANCHES[$MODULE]-master}
@@ -46,6 +56,15 @@ for MODULE in ${!SOURCES[@]}; do
             CHANGED="$CHANGED $MODULE"
         fi
     fi
+
+    # If anything changed in this module or before, blow away any caches
+    if [ "x$CHANGED" != "x" ]; then
+        rm -rf ../cache/cache-$APPID-$MODULE.tar
+    elif test -f "../cache/cache-$APPID-$MODULE.tar"; then
+        # No changes last and there is a cache for this module, start here
+        echo Found cache $MODULE
+        STARTAT=$MODULE
+    fi
 done
 
 cd ..
@@ -64,6 +83,17 @@ mkdir -p build
 
 cd build
 for MODULE in $MODULES; do
+    if [ "x${STARTAT}" != "x" ]; then
+        if [ "x${STARTAT}" == "x${MODULE}" ]; then
+            echo ========== Using cache from $MODULE ================
+            tar xf ../cache/cache-$APPID-$MODULE.tar -C ../app
+            STARTAT=""
+        else
+            echo ========== Ignoring $MODULE ================
+        fi;
+        continue;
+    fi
+
     echo ========== Building $MODULE ================
 
     OPT="${OPTS[$MODULE]-}"
@@ -84,6 +114,10 @@ for MODULE in $MODULES; do
     fi
 
     xdg-app build ../app ../build_helper.sh "$DIR" "$OPT" "$CONFIGURE_ARGS"
+
+    if contains "$CACHEPOINTS" "$MODULE" ; then
+        tar cf ../cache/cache-$APPID-$MODULE.tar -C ../app files
+    fi
 done
 cd ..
 
