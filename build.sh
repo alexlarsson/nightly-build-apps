@@ -50,7 +50,7 @@ for MODULE in $MODULES; do
             git rev-parse -q --verify refs/heads/$BRANCH && OLD_REV=`git rev-parse $BRANCH`
             git fetch origin $BRANCH
             REV=$(git rev-parse $BRANCH)
-            if [ $OLD_REV != $REV ]; then
+            if [ "x$OLD_REV" != "x$REV" ]; then
                 CHANGED="$CHANGED $MODULE"
             fi
             cd ..
