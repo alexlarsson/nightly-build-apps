@@ -160,4 +160,4 @@ if [ "x${CLEANUP_FILES-}" != x ]; then
     xdg-app build app rm -rf ${CLEANUP_FILES-}
 fi
 xdg-app build-finish --command=$COMMAND --share=ipc --socket=x11 --socket=pulseaudio --filesystem=host  app
-xdg-app build-export --subject="Nightly build of ${APPID}, `date`" --body="$BODY" repo app
+xdg-app build-export --subject="Nightly build of ${APPID}, `date`" --body="$BODY" ${EXPORT_ARGS} repo app
