@@ -1,0 +1,48 @@
+APPID=org.inkscape.InkscapeDevel
+SDK=org.gnome.Sdk
+PLATFORM=org.gnome.Platform
+SDK_VERSION=3.18
+
+SOURCES[inkscape]="lp:inkscape"
+SOURCES[cairomm]="http://cairographics.org/releases/cairomm-1.12.0.tar.gz"
+SOURCES[sigcpp]="http://ftp.gnome.org/pub/GNOME/sources/libsigc++/2.6/libsigc++-2.6.1.tar.xz"
+SOURCES[glibmm]="http://ftp.gnome.org/pub/GNOME/sources/glibmm/2.46/glibmm-2.46.1.tar.xz"
+SOURCES[gsl]="http://ftp.gnu.org/gnu/gsl/gsl-1.16.tar.gz"
+SOURCES[gc]="http://pkgs.fedoraproject.org/repo/pkgs/gc/gc-7.4.2.tar.gz/12c05fd2811d989341d8c6d81f66af87/gc-7.4.2.tar.gz"
+#"http://www.hboehm.info/gc/gc_source/gc-7.4.2.tar.gz"
+SOURCES[atomic]="http://www.ivmaisoft.com/_bin/atomic_ops/libatomic_ops-7.4.2.tar.gz"
+SOURCES[atkmm]="http://ftp.acc.umu.se/pub/GNOME/sources/atkmm/2.24/atkmm-2.24.1.tar.xz"
+SOURCES[gtkmm]="http://ftp.acc.umu.se/pub/GNOME/sources/gtkmm/2.24/gtkmm-2.24.4.tar.xz"
+SOURCES[pangomm]="http://ftp.acc.umu.se/pub/GNOME/sources/pangomm/2.38/pangomm-2.38.1.tar.xz"
+SOURCES[boost]="http://downloads.sourceforge.net/project/boost/boost/1.59.0/boost_1_59_0.tar.gz"
+SOURCES[lxml]="http://lxml.de/files/lxml-3.4.4.tgz"
+
+CONFIGURE[gc]="--disable-static --enable-cplusplus"
+
+CONFIGURE[sigcpp]="--disable-documentation"
+CONFIGURE[cairomm]="--disable-documentation"
+CONFIGURE[glibmm]="--disable-documentation"
+CONFIGURE[atkmm]="--disable-documentation"
+CONFIGURE[gtkmm]="--disable-documentation"
+CONFIGURE[pangomm]="--disable-documentation"
+
+OPTS[gtkmm]=stdcpp11
+
+OPTS[boost]="nohelper"
+CUSTOM_PREPARE[boost]="./bootstrap.sh --with-toolset=gcc --with-icu && ./b2 install --prefix=/app"
+
+OPTS[inkscape]="stdcpp11 configure"
+# This works around a bug in gcc: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=50800
+CUSTOM_PREPARE[inkscape]="sed -i s/G_GNUC_MAY_ALIAS// src/util/glib-list-iterators.h"
+
+CUSTOM_PREPARE[lxml]="XML_CONFIG=\"pkg-config libxml-2.0\" XSLT_CONFIG=\"pkg-config  libxslt\" python setup.py build && XML_CONFIG=\"pkg-config libxml-2.0\" XSLT_CONFIG=\"pkg-config  libxslt\" python setup.py install --prefix=/app"
+OPTS[lxml]="nohelper"
+
+MODULES="atomic boost gc gsl lxml sigcpp glibmm cairomm pangomm atkmm gtkmm inkscape"
+CACHEPOINTS="boost gc lxml gtkmm"
+CLEANUP_FILES="/app/bin/inkview /app/lib/libboost_* /app/lib/sigc++-2.0 /app/lib/glibmm-2.4 /app/lib/giomm-2.4 /app/lib/pangomm-1.4 /app/lib/atkmm-1.6 /app/lib/gdkmm-2.4 /app/lib/gtkmm-2.4 /app/lib/cairomm-1.0"
+
+DESKTOP_FILE=inkscape.desktop
+ICON_FILE=inkscape.png
+DESKTOP_NAME_PREFIX="(Nightly) "
+COMMAND=inkscape

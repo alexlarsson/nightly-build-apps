@@ -20,6 +20,7 @@ declare -A OPTS
 declare -A CONFIGURE
 declare -A SOURCES
 declare -A BRANCHES
+declare -A CUSTOM_PREPARE
 
 source "$DEFS"
 
@@ -56,9 +57,28 @@ for MODULE in $MODULES; do
             cd ..
         fi
         BODY="$BODY$MODULE: $URL $REV"$'\n'
+    elif [[ "$URL" =~ ^lp: ]]; then
+        REPONAME=`echo $URL | sed s/.*://`
+        if ! test -d $REPONAME.bzr; then
+            bzr branch  $URL $REPONAME.bzr
+            CHANGED="$CHANGED $MODULE"
+            cd $REPONAME.bzr
+            REV=$(bzr revno)
+            cd ..
+        else
+            cd $REPONAME.bzr
+            OLD_REV=$(bzr revno)
+            bzr pull
+            REV=$(bzr revno)
+            if [ "x$OLD_REV" != "x$REV" ]; then
+                CHANGED="$CHANGED $MODULE"
+            fi
+            cd ..
+        fi
+        BODY="$BODY$MODULE: $URL $REV"$'\n'
     else
         if ! test -f $BASENAME ; then
-            curl -O $URL
+            curl -L -O $URL
             CHANGED="$CHANGED $MODULE"
         fi
         BODY="$BODY$MODULE: $URL"$'\n'
@@ -104,7 +124,6 @@ for MODULE in $MODULES; do
     echo ========== Building $MODULE ================
 
     OPT="${OPTS[$MODULE]-}"
-    CONFIGURE_ARGS="${CONFIGURE[$MODULE]-}"
     URL=${SOURCES[$MODULE]}
     BASENAME=`basename $URL`
     if [[ "$URL" =~ ^git: ]]; then
@@ -112,15 +131,30 @@ for MODULE in $MODULES; do
         rm -rf $DIR
         BRANCH=${BRANCHES[$MODULE]-master}
         git clone --shared --branch $BRANCH ../dl/$BASENAME.git
+    elif [[ "$URL" =~ ^lp: ]]; then
+        REPONAME=`echo $URL | sed s/.*://`
+        DIR=$REPONAME
+        rm -rf $REPONAME
+        bzr branch --stacked ../dl/$REPONAME.bzr $REPONAME
     else
-        DIR=${BASENAME%.tar*}
+        DIR=${BASENAME%.t*}
         rm -rf $DIR
         tar xf ../dl/$BASENAME
 
         OPT="$OPT noautogen"
     fi
 
-    xdg-app build ../app ../build_helper.sh "$DIR" "$OPT" "$CONFIGURE_ARGS"
+    CONFIGURE_ARGS="${CONFIGURE[$MODULE]-}"
+    PREPARE="${CUSTOM_PREPARE[$MODULE]-}"
+
+    cd "$DIR"
+    if [ "x$PREPARE" != "x" ] ; then
+        xdg-app build ../../app bash -c "$PREPARE"
+    fi
+    if ! contains "$OPT" nohelper ; then
+        xdg-app build ../../app ../../build_helper.sh "$OPT" "--prefix=/app $CONFIGURE_ARGS"
+    fi
+    cd ..
 
     if contains "$CACHEPOINTS" "$MODULE" ; then
         tar cf ../cache/cache-$APPID-$MODULE.tar -C ../app files
@@ -136,11 +170,13 @@ xdg-app build app rm -rf /app/share/pkgconfig
 xdg-app build app rm -rf /app/share/aclocal
 xdg-app build app rm -rf /app/share/gtk-doc
 xdg-app build app rm -rf /app/share/man
+xdg-app build app rm -rf /app/share/info
+xdg-app build app rm -rf /app/share/devhelp
 xdg-app build app rm -rf /app/share/vala/vapi
-xdg-app build app bash -c "find /app/lib -name *.a | xargs rm"
-xdg-app build app bash -c "find /app -name *.la | xargs rm"
-xdg-app build app bash -c "find /app -name *.pyo | xargs rm"
-xdg-app build app bash -c "find /app -name *.pyc | xargs rm"
+xdg-app build app bash -c "find /app/lib -name *.a | xargs -r rm"
+xdg-app build app bash -c "find /app -name *.la | xargs -r rm"
+xdg-app build app bash -c "find /app -name *.pyo | xargs -r rm"
+xdg-app build app bash -c "find /app -name *.pyc | xargs -r rm"
 
 xdg-app build app bash -c "find /app -type f | xargs file | grep ELF | grep 'not stripped' | cut -d: -f1 | xargs -r -n 1 strip"
 if [ "x${DESKTOP_FILE-}" != x ]; then
@@ -160,4 +196,4 @@ if [ "x${CLEANUP_FILES-}" != x ]; then
     xdg-app build app rm -rf ${CLEANUP_FILES-}
 fi
 xdg-app build-finish --command=$COMMAND --share=ipc --socket=x11 --socket=pulseaudio --filesystem=host  app
-xdg-app build-export --subject="Nightly build of ${APPID}, `date`" --body="$BODY" ${EXPORT_ARGS} repo app
+xdg-app build-export --subject="Nightly build of ${APPID}, `date`" --body="$BODY" ${EXPORT_ARGS-} repo app
