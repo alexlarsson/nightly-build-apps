@@ -17,9 +17,20 @@ SOURCES[gexiv2]="http://ftp.gnome.org/pub/GNOME/sources/gexiv2/0.10/gexiv2-0.10.
 SOURCES[babl]="git://git.gnome.org/babl"
 SOURCES[gegl]="git://git.gnome.org/gegl"
 SOURCES[gimp]="git://git.gnome.org/gimp"
+SOURCES[ilmbase]="http://download.savannah.nongnu.org/releases/openexr/ilmbase-2.1.0.tar.gz"
+SOURCES[openexr]="http://download.savannah.nongnu.org/releases/openexr/openexr-2.1.0.tar.gz"
+SOURCES[jasper]="http://www.ece.uvic.ca/~frodo/jasper/software/jasper-1.900.1.zip"
+CONFIGURE[jasper]="--disable-static --enable-shared"
+SOURCES[libraw]="http://www.libraw.org/data/LibRaw-0.17.0.tar.gz"
+SOURCES[poppler]="http://poppler.freedesktop.org/poppler-0.36.0.tar.xz"
+CONFIGURE[poppler]=--disable-libopenjpeg
 
-MODULES="py2cairo pygobject pygtk exiv2 gexiv2 babl gegl gimp"
-CACHEPOINTS="gexiv2 babl gegl"
+SOURCES[popplerdata]="http://poppler.freedesktop.org/poppler-data-0.4.7.tar.gz"
+OPTS[popplerdata]=nohelper
+CUSTOM_PREPARE[popplerdata]="make && make install prefix=/app"
+
+MODULES="py2cairo pygobject pygtk exiv2 gexiv2 ilmbase openexr jasper libraw popplerdata poppler babl gegl gimp"
+CACHEPOINTS="gexiv2 jasper libraw popplerdata poppler babl gegl"
 CLEANUP_FILES="/app/lib/pygtk/2.0/demos"
 
 # TODO:

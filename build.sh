@@ -136,6 +136,12 @@ for MODULE in $MODULES; do
         DIR=$REPONAME
         rm -rf $REPONAME
         bzr branch --stacked ../dl/$REPONAME.bzr $REPONAME
+    elif [[ "$URL" =~ .zip$ ]]; then
+        DIR=${BASENAME%.zip}
+        rm -rf $DIR
+        unzip ../dl/$BASENAME
+
+        OPT="$OPT noautogen"
     else
         DIR=${BASENAME%.t*}
         rm -rf $DIR
