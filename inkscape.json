@@ -1,0 +1,159 @@
+{
+    "app-id": "org.inkscape.InkscapeDevel",
+    "version": "master",
+    "runtime": "org.gnome.Platform",
+    "runtime-version": "3.18",
+    "sdk": "org.gnome.Sdk",
+    "build-options" : {
+        "cflags": "-O2 -g",
+        "cxxflags": "-O2 -g",
+        "env": {
+            "V": "1"
+        }
+    },
+    "modules": [
+        {
+            "name": "atomic",
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "http://www.ivmaisoft.com/_bin/atomic_ops/libatomic_ops-7.4.2.tar.gz",
+                    "sha256": "04fa615f62992547bcbda562260e28b504bc4c06e2f985f267f3ade30304b5dd"
+                }
+            ]
+        },
+        {
+            "name": "boost",
+            "config-opts": [ "--with-toolset=gcc", "--with-icu", "--with-libraries=atomic,signals" ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "http://downloads.sourceforge.net/project/boost/boost/1.59.0/boost_1_59_0.tar.gz",
+                    "sha256": "47f11c8844e579d02691a607fbd32540104a9ac7a2534a8ddaef50daf502baac"
+                },
+                {
+                    "type": "file",
+                    "path": "boost-configure",
+                    "dest-filename": "configure"
+                }
+            ]
+        },
+        {
+            "name": "gc",
+            "config-opts": [ "--disable-static", "--enable-cplusplus" ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "http://www.hboehm.info/gc/gc_source/gc-7.4.2.tar.gz",
+                    "sha256": "63320ad7c45460e4a40e03f5aa4c6893783f21a16416c3282b994f933312afa2"
+                }
+            ]
+        },
+        {
+            "name": "gsl",
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "http://ftp.gnu.org/gnu/gsl/gsl-1.16.tar.gz",
+                    "sha256": "73bc2f51b90d2a780e6d266d43e487b3dbd78945dd0b04b14ca5980fe28d2f53"
+                }
+            ]
+        },
+        {
+            "name": "lxml",
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "http://lxml.de/files/lxml-3.4.4.tgz",
+                    "sha256": "b3d362bac471172747cda3513238f115cbd6c5f8b8e6319bf6a97a7892724099"
+                },
+                {
+                    "type": "file",
+                    "path": "lxml-configure",
+                    "dest-filename": "configure"
+                }
+            ]
+        },
+        {
+            "name": "sigc++",
+            "config-opts": [ "--disable-documentation" ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "http://ftp.gnome.org/pub/GNOME/sources/libsigc++/2.6/libsigc++-2.6.1.tar.xz",
+                    "sha256": "186f2167c1b3d90529ce8e715246bf160bc67ec1ec19f4e45d76c0ae54dfbe1b"
+                }
+            ]
+        },
+        {
+            "name": "glibmm",
+            "config-opts": [ "--disable-documentation" ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "http://ftp.gnome.org/pub/GNOME/sources/glibmm/2.46/glibmm-2.46.1.tar.xz",
+                    "sha256": "9647e596c1081d2ea202bd3da2824ec2ea359498fa86eb59a55b1b307dd8c4aa"
+                }
+            ]
+        },
+        {
+            "name": "cairomm",
+            "config-opts": [ "--disable-documentation" ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "http://cairographics.org/releases/cairomm-1.12.0.tar.gz",
+                    "sha256": "50435aec6fdd976934b791e808993160113ad19ca53a5634a9b64ccbe55874cc"
+                }
+            ]
+        },
+        {
+            "name": "pangomm",
+            "config-opts": [ "--disable-documentation" ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "http://ftp.acc.umu.se/pub/GNOME/sources/pangomm/2.38/pangomm-2.38.1.tar.xz",
+                    "sha256": "effb18505b36d81fc32989a39ead8b7858940d0533107336a30bc3eef096bc8b"
+                }
+            ]
+        },
+        {
+            "name": "atkmm",
+            "config-opts": [ "--disable-documentation" ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "http://ftp.acc.umu.se/pub/GNOME/sources/atkmm/2.24/atkmm-2.24.1.tar.xz",
+                    "sha256": "26c41d8da37d04eef9f219c6ce87d94852e1cacaad823050e520e1c08a36ed23"
+                }
+            ]
+        },
+        {
+            "name": "gtkmm",
+            "config-opts": [ "--disable-documentation" ],
+            "build-options" : { "cxxflags": "-O2 -g -std=c++11" },
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "http://ftp.acc.umu.se/pub/GNOME/sources/gtkmm/2.24/gtkmm-2.24.4.tar.xz",
+                    "sha256": "443a2ff3fcb42a915609f1779000390c640a6d7fd19ad8816e6161053696f5ee"
+                }
+            ]
+        },
+        {
+            "name": "inkscape",
+            "build-options" : { "cxxflags": "-O2 -g -std=c++11" },
+            "sources": [
+                {
+                    "type": "bzr",
+                    "url": "lp:inkscape"
+                },
+                {
+                    "type": "patch",
+                    "path": "inkscape-gcc-bug.patch"
+                }
+            ]
+        }
+    ]
+}

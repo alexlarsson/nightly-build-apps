@@ -1,0 +1,10 @@
+#!/bin/sh
+./bootstrap.sh "$@"
+
+cat <<EOF > Makefile
+all:
+	./b2
+
+install:
+	./b2 install
+EOF

@@ -1,0 +1,11 @@
+#!/bin/sh
+
+FLAGS="$@"
+
+cat <<EOF > Makefile
+all:
+	XML_CONFIG="pkg-config libxml-2.0" XSLT_CONFIG="pkg-config  libxslt" python setup.py build
+
+install:
+	XML_CONFIG="pkg-config libxml-2.0" XSLT_CONFIG="pkg-config  libxslt" python setup.py install $FLAGS
+EOF

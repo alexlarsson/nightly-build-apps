@@ -1,0 +1,40 @@
+=== modified file 'src/util/glib-list-iterators.h'
+--- inkscape/src/util/glib-list-iterators.h	2012-02-15 15:03:26 +0000
++++ inkscape/src/util/glib-list-iterators.h	2015-11-20 15:39:45 +0000
+@@ -32,7 +32,7 @@
+ class GSListConstIterator<T *> {
+ public:
+     typedef std::forward_iterator_tag iterator_category;
+-    typedef T * const value_type G_GNUC_MAY_ALIAS;
++    typedef T * const value_type ;
+     typedef std::ptrdiff_t difference_type;
+     typedef value_type *pointer;
+     typedef value_type &reference;
+@@ -71,7 +71,7 @@
+ class GSListIterator<T *> {
+ public:
+     typedef std::forward_iterator_tag iterator_category;
+-    typedef T *value_type G_GNUC_MAY_ALIAS;
++    typedef T *value_type ;
+     typedef std::ptrdiff_t difference_type;
+     typedef value_type *pointer;
+     typedef value_type &reference;
+@@ -116,7 +116,7 @@
+ class GListConstIterator<T *> {
+ public:
+     typedef std::bidirectional_iterator_tag iterator_category;
+-    typedef T * const value_type G_GNUC_MAY_ALIAS;
++    typedef T * const value_type ;
+     typedef std::ptrdiff_t difference_type;
+     typedef value_type *pointer;
+     typedef value_type &reference;
+@@ -165,7 +165,7 @@
+ class GListIterator<T *> {
+ public:
+     typedef std::bidirectional_iterator_tag iterator_category;
+-    typedef T *value_type G_GNUC_MAY_ALIAS;
++    typedef T *value_type ;
+     typedef std::ptrdiff_t difference_type;
+     typedef value_type *pointer;
+     typedef value_type &reference;
+
