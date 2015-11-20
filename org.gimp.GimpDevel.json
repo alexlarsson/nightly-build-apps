@@ -4,6 +4,11 @@
     "runtime": "org.gnome.Platform",
     "runtime-version": "3.18",
     "sdk": "org.gnome.Sdk",
+    "command": "gimp-2.9",
+    "rename-desktop-file": "gimp.desktop",
+    "rename-icon": "gimp",
+    "finish-args": ["--share=ipc", "--socket=x11", "--socket=pulseaudio", "--filesystem=host" ],
+    "desktop-file-name-prefix": "(Nightly) ",
     "build-options" : {
         "cflags": "-O2 -g",
         "cxxflags": "-O2 -g",
@@ -11,6 +16,7 @@
             "V": "1"
         }
     },
+    "cleanup": ["/include", "/lib/pkgconfig", "/share/pkgconfig", "/share/aclocal", "/man", "/share/man", "/share/gtk-doc", "/share/vala", "*.la", "*.a"],
     "modules": [
         {
             "name": "py2cairo",
@@ -31,6 +37,7 @@
         {
             "name": "pygobject",
             "config-opts": [ "--disable-introspection" ],
+            "cleanup": [ "/bin", "/share/pygobject/2.0/codegen" ],
             "sources": [
                 {
                     "type": "archive",
@@ -41,6 +48,7 @@
         },
         {
             "name": "pygtk",
+            "cleanup": [ "/bin", "/lib/pygtk" ],
             "sources": [
                 {
                     "type": "archive",
@@ -51,6 +59,7 @@
         },
         {
             "name": "exiv2",
+            "cleanup": [ "/bin" ],
             "sources": [
                 {
                     "type": "archive",
@@ -82,6 +91,7 @@
         },
         {
             "name": "openexr",
+            "cleanup": [ "/bin", "/share/doc" ],
             "sources": [
                 {
                     "type": "archive",
@@ -93,6 +103,7 @@
         {
             "name": "jasper",
             "config-opts": [ "--disable-static", "--enable-shared" ],
+            "cleanup": [ "/bin" ],
             "sources": [
                 {
                     "type": "archive",
@@ -104,6 +115,7 @@
         {
             "name": "libraw",
             "config-opts": [ "--disable-static", "--enable-shared" ],
+            "cleanup": [ "/bin", "/share/doc" ],
             "sources": [
                 {
                     "type": "archive",
@@ -127,6 +139,7 @@
         {
             "name": "poppler",
             "config-opts": [ "--disable-libopenjpeg" ],
+            "cleanup": [ "/bin" ],
             "sources": [
                 {
                     "type": "archive",
@@ -146,6 +159,7 @@
         },
         {
             "name": "gegl",
+            "cleanup": [ "/bin" ],
             "sources": [
                 {
                     "type": "git",

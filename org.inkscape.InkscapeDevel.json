@@ -4,6 +4,11 @@
     "runtime": "org.gnome.Platform",
     "runtime-version": "3.18",
     "sdk": "org.gnome.Sdk",
+    "command": "inkscape",
+    "rename-desktop-file": "inkscape.desktop",
+    "rename-icon": "inkscape",
+    "finish-args": ["--share=ipc", "--socket=x11", "--socket=pulseaudio", "--filesystem=host" ],
+    "desktop-file-name-prefix": "(Nightly) ",
     "build-options" : {
         "cflags": "-O2 -g",
         "cxxflags": "-O2 -g",
@@ -11,9 +16,11 @@
             "V": "1"
         }
     },
+    "cleanup": ["/include", "/lib/*/include", "/lib/pkgconfig", "/share/pkgconfig", "/share/aclocal", "/man", "/share/man", "/share/info", "/share/gtk-doc", "*.la", "*.a"],
     "modules": [
         {
             "name": "atomic",
+            "cleanup": [ "/share/libatomic_ops" ],
             "sources": [
                 {
                     "type": "archive",
@@ -24,7 +31,7 @@
         },
         {
             "name": "boost",
-            "config-opts": [ "--with-toolset=gcc", "--with-icu", "--with-libraries=atomic,signals" ],
+            "config-opts": [ "--with-toolset=gcc", "--with-icu", "--with-libraries=atomic" ],
             "sources": [
                 {
                     "type": "archive",
@@ -41,6 +48,7 @@
         {
             "name": "gc",
             "config-opts": [ "--disable-static", "--enable-cplusplus" ],
+            "cleanup": [ "/share/gc" ],
             "sources": [
                 {
                     "type": "archive",
@@ -51,6 +59,7 @@
         },
         {
             "name": "gsl",
+            "cleanup": [ "/bin" ],
             "sources": [
                 {
                     "type": "archive",
