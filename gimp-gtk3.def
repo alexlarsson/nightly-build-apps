@@ -1,8 +1,0 @@
-source ./gimp.def
-
-APPID=org.gimp.GimpDevelGtk3
-
-BRANCHES[gimp]="gtk3-port"
-
-DESKTOP_NAME_PREFIX="(Nightly gtk3) "
-COMMAND=gimp-2.99
