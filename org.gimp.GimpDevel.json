@@ -28,8 +28,14 @@
                     "sha256": "d30439f06c2ec1a39e27464c6c828b6eface3b22ee17b2de05dc409e429a7431"
                 },
                 {
-                    "type": "file",
-                    "path": "py2cairo-autogen.sh",
+                    "type": "script",
+                    "commands": [
+                        "libtoolize --force",
+                        "aclocal",
+                        "autoheader",
+                        "automake --force-missing --add-missing --foreign",
+                        "autoconf"
+                    ],
                     "dest-filename": "autogen.sh"
                 }
             ]
