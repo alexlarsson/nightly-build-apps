@@ -1,0 +1,103 @@
+{
+    "app-id": "net.scribus.Scribus",
+    "version": "master",
+    "runtime": "org.gnome.Platform",
+    "runtime-version": "3.18",
+    "sdk": "org.gnome.Sdk",
+    "command": "scribus",
+    "rename-desktop-file": "scribus.desktop",
+    "rename-icon": "scribus",
+    "desktop-file-name-prefix": "(Nightly) ",
+    "finish-args": ["--device=dri", "--share=ipc", "--socket=x11", "--socket=pulseaudio", "--filesystem=host" ],
+    "build-options": {
+        "cflags": "-O2 -g",
+        "cxxflags": "-O2 -g",
+        "env": {
+            "V": "1"
+        }
+    },
+    "cleanup": ["/include", "/lib/pkgconfig", "/share/pkgconfig", "/lib/cmake", "*.la", "*.a"],
+    "modules": [
+        {
+            "name": "qt5-qtbase",
+            "cleanup": [ "/bin", "/mkspecs" ],
+            "config-opts": [ "--confirm-license", "--opensource",
+                             "--release", "--shared",
+                             "-platform", "linux-g++",
+                             "-optimized-qmake",
+                             "-verbose",
+                             "-nomake", "examples",
+                             "-system-harfbuzz",
+                             "-system-sqlite",
+                             "-no-alsa",
+                             "-accessibility",
+                             "-dbus-linked",
+                             "-fontconfig",
+                             "-glib",
+                             "-gtkstyle",
+                             "-iconv",
+                             "-icu",
+                             "-openssl-linked",
+                             "-no-pch",
+                             "-no-rpath",
+                             "-no-separate-debug-info",
+                             "-reduce-relocations",
+                             "-no-directfb",
+                             "-no-linuxfb",
+                             "-no-kms",
+                             "-system-proxies"
+                           ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "http://download.qt.io/official_releases/qt/5.5/5.5.1/submodules/qtbase-opensource-src-5.5.1.tar.xz",
+                    "sha256": "dfa4e8a4d7e4c6b69285e7e8833eeecd819987e1bdbe5baa6b6facd4420de916"
+                }
+            ]
+        },
+        {
+            "name": "qt5-qttools",
+            "cleanup": [ "/bin", "/mkspecs" ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "http://download.qt.io/official_releases/qt/5.5/5.5.1/submodules/qttools-opensource-src-5.5.1.tar.xz",
+                    "sha256": "4361f6ce49717058160908297841a18b94645cec593d1b48fb126c9d06c87bfd"
+                },
+                {
+                    "type": "script",
+                    "commands": [ "qmake" ],
+                    "dest-filename": "configure"
+                }
+            ]
+        },
+        {
+            "name": "qt5-qtdeclarative",
+            "cleanup": [ "/bin", "/mkspecs" ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "http://download.qt.io/official_releases/qt/5.5/5.5.1/submodules/qtdeclarative-opensource-src-5.5.1.tar.xz",
+                    "sha256": "5fd14eefb83fff36fb17681693a70868f6aaf6138603d799c16466a094b26791"
+                },
+                {
+                    "type": "script",
+                    "commands": [ "qmake" ],
+                    "dest-filename": "configure"
+                }
+            ]
+        },
+        {
+            "name": "scribus",
+            "cmake": true,
+            "post-install": [ "install -D scribus.desktop /app/share/applications/scribus.desktop",
+                              "install -D resources/iconsets/1_5_0/scribus.png /app/share/icons/hicolor/48x48/apps/scribus.png"],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://github.com/scribusproject/scribus.git"
+                }
+            ]
+        }
+    ]
+}
