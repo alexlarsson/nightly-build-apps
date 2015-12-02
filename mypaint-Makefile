@@ -1,0 +1,6 @@
+all:
+	scons
+
+install:
+	scons prefix=/app install
+	gtk-update-icon-cache --ignore-theme-index /app/share/icons/hicolor

@@ -1,0 +1,137 @@
+{
+    "app-id": "org.mypaint.MypaintDevel",
+    "version": "master",
+    "runtime": "org.gnome.Platform",
+    "runtime-version": "3.18",
+    "sdk": "org.gnome.Sdk",
+    "command": "mypaint-2.9",
+    "rename-desktop-file": "mypaint.desktop",
+    "rename-icon": "mypaint",
+    "copy-icon": true,
+    "finish-args": ["--share=ipc", "--socket=x11", "--socket=pulseaudio", "--filesystem=host" ],
+    "desktop-file-name-prefix": "(Nightly) ",
+    "build-options" : {
+        "cflags": "-O2 -g",
+        "cxxflags": "-O2 -g",
+        "env": {
+            "V": "1"
+        }
+    },
+    "cleanup": ["/include", "/lib/pkgconfig", "/share/pkgconfig", "/share/aclocal", "/man", "/share/man", "/share/gtk-doc", "/share/vala", "*.la", "*.a"],
+    "modules": [
+        {
+            "name": "scons",
+            "no-autogen": true,
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "http://downloads.sourceforge.net/project/scons/scons/2.4.1/scons-2.4.1.tar.gz",
+                    "sha256": "8fc4f42928c69bcbb33e1be94b646f2c700b659693fabc778c192d4d22f753a7"
+                },
+                {
+                    "type": "file",
+                    "path": "scons-Makefile",
+                    "dest-filename": "Makefile"
+                }
+            ]
+        },
+        {
+            "name": "swig",
+            "config-opts": ["--without-boost", "--without-pcre"],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "http://prdownloads.sourceforge.net/swig/swig-3.0.7.tar.gz",
+                    "sha256": "06dc8816a225667ce1eee545af3caf87e1bbaa379c32838d4cea53152514348d"
+                }
+            ]
+        },
+        {
+            "name": "numpy",
+            "no-autogen": true,
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "http://downloads.sourceforge.net/project/numpy/NumPy/1.10.1/numpy-1.10.1.tar.gz",
+                    "sha256": "8b9f453f29ce96a14e625100d3dcf8926301d36c5f622623bf8820e748510858"
+                },
+                {
+                    "type": "file",
+                    "path": "numpy-Makefile",
+                    "dest-filename": "Makefile"
+                }
+            ]
+        },
+        {
+            "name": "py2cairo",
+            "rm-configure": true,
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "http://cairographics.org/releases/py2cairo-1.10.0.tar.bz2",
+                    "sha256": "d30439f06c2ec1a39e27464c6c828b6eface3b22ee17b2de05dc409e429a7431"
+                },
+                {
+                    "type": "script",
+                    "commands": [
+                        "libtoolize --force",
+                        "aclocal",
+                        "autoheader",
+                        "automake --force-missing --add-missing --foreign",
+                        "autoconf"
+                    ],
+                    "dest-filename": "autogen.sh"
+                }
+            ]
+        },
+        {
+            "name": "pygobject",
+            "build-options" : {
+                "env": {
+                    "PYTHON": "python2"
+                }
+            },
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "http://ftp.gnome.org/pub/GNOME/sources/pygobject/3.18/pygobject-3.18.2.tar.xz",
+                    "sha256": "2a3cad1517916b74e131e6002c3824361aee0671ffb0d55ded119477fc1c2c5f"
+                }
+            ]
+        },
+        {
+            "name": "babl",
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "git://git.gnome.org/babl"
+                }
+            ]
+        },
+        {
+            "name": "gegl",
+            "cleanup": [ "/bin" ],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "git://git.gnome.org/gegl"
+                }
+            ]
+        },
+        {
+            "name": "mypaint",
+            "no-autogen": true,
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://github.com/mypaint/mypaint.git"
+                },
+                {
+                    "type": "file",
+                    "path": "mypaint-Makefile",
+                    "dest-filename": "Makefile"
+                }
+            ]
+        }
+    ]
+}
