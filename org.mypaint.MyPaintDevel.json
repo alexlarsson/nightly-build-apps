@@ -4,7 +4,7 @@
     "runtime": "org.gnome.Platform",
     "runtime-version": "3.18",
     "sdk": "org.gnome.Sdk",
-    "command": "mypaint-2.9",
+    "command": "mypaint",
     "rename-desktop-file": "mypaint.desktop",
     "rename-icon": "mypaint",
     "copy-icon": true,
