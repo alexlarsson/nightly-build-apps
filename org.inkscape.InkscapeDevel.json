@@ -157,10 +157,6 @@
                 {
                     "type": "bzr",
                     "url": "lp:inkscape"
-                },
-                {
-                    "type": "patch",
-                    "path": "inkscape-gcc-bug.patch"
                 }
             ]
         }
