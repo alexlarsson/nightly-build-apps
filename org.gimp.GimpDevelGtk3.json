@@ -1,5 +1,5 @@
 {
-    "app-id": "org.gimp.GimpDevel",
+    "app-id": "org.gimp.GimpDevelGtk3",
     "version": "master",
     "runtime": "org.gnome.Platform",
     "runtime-version": "3.18",
