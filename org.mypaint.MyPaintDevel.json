@@ -1,6 +1,6 @@
 {
     "app-id": "org.mypaint.MypaintDevel",
-    "version": "master",
+    "branch": "master",
     "runtime": "org.gnome.Platform",
     "runtime-version": "3.18",
     "sdk": "org.gnome.Sdk",
