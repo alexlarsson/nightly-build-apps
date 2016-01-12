@@ -19,6 +19,23 @@
     "cleanup": ["/include", "/lib/pkgconfig", "/share/pkgconfig", "/share/aclocal", "/man", "/share/man", "/share/gtk-doc", "/share/vala", "*.la", "*.a"],
     "modules": [
         {
+            "name": "scons",
+            "no-autogen": true,
+            "cleanup": [ "*" ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "http://downloads.sourceforge.net/project/scons/scons/2.4.1/scons-2.4.1.tar.gz",
+                    "sha256": "8fc4f42928c69bcbb33e1be94b646f2c700b659693fabc778c192d4d22f753a7"
+                },
+                {
+                    "type": "file",
+                    "path": "scons-Makefile",
+                    "dest-filename": "Makefile"
+                }
+            ]
+        },
+        {
             "name": "py2cairo",
             "rm-configure": true,
             "sources": [
@@ -170,6 +187,21 @@
                 {
                     "type": "git",
                     "url": "git://git.gnome.org/gegl"
+                }
+            ]
+        },
+        {
+            "name": "libmypaint",
+            "no-autogen": true,
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://github.com/mypaint/libmypaint.git"
+                },
+                {
+                    "type": "file",
+                    "path": "libmypaint-Makefile",
+                    "dest-filename": "Makefile"
                 }
             ]
         },
