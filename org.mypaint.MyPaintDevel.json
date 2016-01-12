@@ -21,6 +21,7 @@
     "modules": [
         {
             "name": "scons",
+            "cleanup": [ "*" ],
             "no-autogen": true,
             "sources": [
                 {
@@ -38,6 +39,7 @@
         {
             "name": "swig",
             "config-opts": ["--without-boost", "--without-pcre"],
+            "cleanup": [ "*" ],
             "sources": [
                 {
                     "type": "archive",
