@@ -6,6 +6,7 @@
     "sdk": "org.gnome.Sdk",
     "command": "gimp-2.99",
     "rename-desktop-file": "gimp.desktop",
+    "rename-appdata-file": "gimp.appdata.xml",
     "rename-icon": "gimp",
     "finish-args": ["--share=ipc", "--socket=x11", "--socket=pulseaudio", "--filesystem=host" ],
     "desktop-file-name-prefix": "(Nightly Gtk3) ",

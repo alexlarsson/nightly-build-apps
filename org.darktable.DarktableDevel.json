@@ -6,6 +6,7 @@
     "sdk": "org.gnome.Sdk",
     "command": "darktable",
     "rename-desktop-file": "darktable.desktop",
+    "rename-appdata-file": "darktable.appdata.xml",
     "rename-icon": "darktable",
     "finish-args": ["--share=ipc", "--socket=x11", "--socket=pulseaudio", "--filesystem=host" ],
     "desktop-file-name-prefix": "(Nightly) ",

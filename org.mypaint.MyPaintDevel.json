@@ -6,6 +6,7 @@
     "sdk": "org.gnome.Sdk",
     "command": "mypaint",
     "rename-desktop-file": "mypaint.desktop",
+    "rename-appdata-file": "mypaint.appdata.xml",
     "rename-icon": "mypaint",
     "copy-icon": true,
     "finish-args": ["--share=ipc", "--socket=x11", "--socket=pulseaudio", "--filesystem=host" ],
