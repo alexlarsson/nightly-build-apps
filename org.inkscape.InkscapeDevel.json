@@ -8,6 +8,7 @@
     "rename-desktop-file": "inkscape.desktop",
     "rename-icon": "inkscape",
     "finish-args": ["--share=ipc", "--socket=x11", "--socket=pulseaudio", "--filesystem=host" ],
+    "appstream-compose": false,
     "tags": ["nightly"],
     "desktop-file-name-prefix": "(Nightly) ",
     "build-options" : {

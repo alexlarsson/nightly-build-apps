@@ -9,6 +9,7 @@
     "rename-appdata-file": "gimp.appdata.xml",
     "rename-icon": "gimp",
     "finish-args": ["--share=ipc", "--socket=x11", "--socket=pulseaudio", "--filesystem=host" ],
+    "appstream-compose": false,
     "tags": ["nightly"],
     "desktop-file-name-prefix": "(Nightly) ",
     "build-options" : {
