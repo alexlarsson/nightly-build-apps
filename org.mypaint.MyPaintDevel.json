@@ -2,7 +2,7 @@
     "id": "org.mypaint.MypaintDevel",
     "branch": "master",
     "runtime": "org.gnome.Platform",
-    "runtime-version": "3.18",
+    "runtime-version": "3.20",
     "sdk": "org.gnome.Sdk",
     "command": "mypaint",
     "rename-desktop-file": "mypaint.desktop",
