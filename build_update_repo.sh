@@ -1,3 +1,3 @@
 #!/bin/bash
 
-xdg-app build-update-repo --prune --prune-depth=20  ${EXPORT_ARGS-} repo
+xdg-app build-update-repo --generate-static-deltas --prune --prune-depth=8  ${EXPORT_ARGS-} repo
