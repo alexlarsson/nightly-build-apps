@@ -1,0 +1,13 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index fe79361..c3765df 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -21,7 +21,7 @@ include(TestBigEndian)
+ if(NOT IS_DIRECTORY ${CMAKE_SOURCE_DIR}/.git)
+   set(SOURCE_PACKAGE 1)
+ else()
+-  set(SOURCE_PACKAGE 0)
++  set(SOURCE_PACKAGE 1)
+ endif()
+ 
+ option(USE_CAMERA_SUPPORT "Detect and use camera support if available." ON)

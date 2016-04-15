@@ -96,6 +96,10 @@
                 {
                     "type": "git",
                     "url": "git://github.com/darktable-org/darktable.git"
+                },
+                {
+                    "type": "patch",
+                    "path": "darktable-warnings.patch"
                 }
             ]
         }
