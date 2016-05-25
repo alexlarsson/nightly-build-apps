@@ -124,6 +124,15 @@
             ]
         },
         {
+            "name": "libmypaint",
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://github.com/mypaint/libmypaint.git"
+                }
+            ]
+        },
+        {
             "name": "mypaint",
             "no-autogen": true,
             "sources": [
