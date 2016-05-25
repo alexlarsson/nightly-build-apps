@@ -194,16 +194,10 @@
         },
         {
             "name": "libmypaint",
-            "no-autogen": true,
             "sources": [
                 {
                     "type": "git",
                     "url": "https://github.com/mypaint/libmypaint.git"
-                },
-                {
-                    "type": "file",
-                    "path": "libmypaint-Makefile",
-                    "dest-filename": "Makefile"
                 }
             ]
         },

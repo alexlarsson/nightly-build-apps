@@ -1,5 +1,0 @@
-all:
-	scons
-
-install:
-	scons prefix=/app install
