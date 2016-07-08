@@ -1,0 +1,21 @@
+diff --git a/Telegram/Telegram.pro b/Telegram/Telegram.pro
+index 8651364..ac37ad6 100644
+--- a/Telegram/Telegram.pro
++++ b/Telegram/Telegram.pro
+@@ -494,12 +496,10 @@ INCLUDEPATH += "/usr/include/dee-1.0"
+ INCLUDEPATH += "/usr/include/libdbusmenu-glib-0.4"
+
+ LIBS += -ldl -llzma -lopenal -lavformat -lavcodec -lswresample -lswscale -lavutil -lopus -lva
+-LIBS += $${QT_TDESKTOP_PATH}/plugins/platforminputcontexts/libcomposeplatforminputcontextplugin.a \
+-        $${QT_TDESKTOP_PATH}/plugins/platforminputcontexts/libibusplatforminputcontextplugin.a \
+-        $${QT_TDESKTOP_PATH}/plugins/platforminputcontexts/libfcitxplatforminputcontextplugin.a
+-LIBS += /usr/local/lib/libz.a
+-LIBS += /usr/local/lib/libxkbcommon.a
+-LIBS += ./../../../Libraries/breakpad/src/client/linux/libbreakpad_client.a
++LIBS += /usr/lib/plugins/platforminputcontexts/libcomposeplatforminputcontextplugin.a \
++        /usr/lib/plugins/platforminputcontexts/libibusplatforminputcontextplugin.a \
++        /usr/lib/plugins/platforminputcontexts/libfcitxplatforminputcontextplugin.a
++
+
+ RESOURCES += \
+     ./Resources/telegram.qrc \
