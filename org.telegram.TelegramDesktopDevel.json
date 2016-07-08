@@ -304,7 +304,7 @@
                         Version=1.0
                         Name=Telegram Desktop
                         Comment=Official desktop version of Telegram messaging app
-                        Exec=/usr/bin/telegram-desktop -- %u
+                        Exec=telegram-desktop -- %u
                         Icon=telegram-desktop
                         Terminal=false
                         StartupWMClass=telegram-desktop
@@ -314,7 +314,7 @@
 
                 "install -d \"/app/share/kservices5\"",
                 "echo \"[Protocol]
-                        exec=/usr/bin/telegram-desktop -- %u
+                        exec=telegram-desktop -- %u
                         protocol=tg
                         input=none
                         output=none
