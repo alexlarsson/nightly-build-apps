@@ -15,6 +15,7 @@
                  "/man",
                  "/share/man",
                  "/lib/systemd",
+                 "/lib/libQt5*",
                  "*.la"],
     "cleanup-commands": [ "touch -d @0 /usr/share/fonts",
                           "touch -d @0 /usr/share/fonts/*",
