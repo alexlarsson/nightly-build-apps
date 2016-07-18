@@ -375,11 +375,6 @@
                     "type": "shell",
                     "commands": [
                         "echo 'QT += gui-private core-private' >> Telegram/Telegram.pro",
-                        "echo 'INCLUDEPATH += \"/app/include/libappindicator-0.1\"' >> Telegram/Telegram.pro",
-                        "echo 'INCLUDEPATH += \"/usr/lib/glib-2.0/include\"' >> Telegram/Telegram.pro",
-                        "echo 'INCLUDEPATH += \"/usr/lib/glib-2.0/include\"' >> Telegram/Telegram.pro",
-                        "echo 'INCLUDEPATH += \"/usr/lib/gtk-2.0/include\"' >> Telegram/Telegram.pro",
-                        "echo 'INCLUDEPATH += \"/app/include/AL/al.h\"' >> Telegram/Telegram.pro",
                         "echo 'DEFINES += TDESKTOP_DISABLE_CRASH_REPORTS TDESKTOP_DISABLE_UNITY_INTEGRATION' >> Telegram/Telegram.pro",
                         "sed -i 's/CUSTOM_API_ID//g' Telegram/Telegram.pro",
                         "mkdir -p Linux/ReleaseIntermediate",
