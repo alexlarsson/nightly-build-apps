@@ -1,0 +1,388 @@
+{
+    "id": "org.telegram.TelegramDesktopDevel",
+    "branch": "master",
+    "runtime": "org.gnome.Platform",
+    "runtime-version": "3.20",
+    "sdk": "org.gnome.Sdk",
+    "command": "telegram-desktop",
+    "rename-desktop-file": "telegram-desktop.desktop",
+    "rename-icon": "telegram-desktop",
+    "tags": ["nightly"],
+    "desktop-file-name-prefix": "(Nightly) ",
+    "writable-sdk": true,
+    "finish-args": ["--share=ipc", "--share=network", "--socket=x11", "--filesystem=host", "--socket=pulseaudio" ],
+    "cleanup": [ "/cache",
+                 "/man",
+                 "/share/man",
+                 "/lib/systemd",
+                 "/lib/libQt5*",
+                 "*.la"],
+    "cleanup-commands": [ "touch -d @0 /usr/share/fonts",
+                          "touch -d @0 /usr/share/fonts/*",
+                          "fc-cache -fs"
+                        ],
+    "cleanup-platform": [ "/include",
+                          "/share/aclocal",
+                          "/share/pkgconfig",
+                          "/lib/pkgconfig",
+                          "*.a"
+                        ],
+     "build-options" : {
+        "cflags": "-O2 -g",
+        "cxxflags": "-O2 -g",
+        "env": {
+            "V": "1"
+        }
+    },
+    "modules": [
+        {
+            "name": "qt5-qtbase",
+            "cleanup-platform": [ "/bin", "/mkspecs" ],
+            "config-opts": [ "--confirm-license", "--opensource",
+                             "--release", "--shared",
+                             "-platform", "linux-g++",
+                             "-optimized-qmake",
+                             "-nomake", "examples",
+                             "-nomake", "tests",
+                             "-system-harfbuzz",
+                             "-system-sqlite",
+                             "-no-alsa",
+                             "-accessibility",
+                             "-dbus-linked",
+                             "-fontconfig",
+                             "-glib",
+                             "-iconv",
+                             "-icu",
+                             "-openssl-linked",
+                             "-no-pch",
+                             "-no-rpath",
+                             "-no-separate-debug-info",
+                             "-reduce-relocations",
+                             "-no-directfb",
+                             "-no-linuxfb",
+                             "-no-kms",
+                             "-no-cups",
+                             "-system-proxies",
+                             "-static",
+
+                             "-archdatadir", "/usr/lib/"
+                           ],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "git://code.qt.io/qt/qtbase.git",
+                    "branch": "v5.6.0"
+                },
+                {
+                    "type": "git",
+                    "url": "https://github.com/telegramdesktop/tdesktop.git",
+                    "dest": "telegram"
+                },
+                {
+                    "type": "shell",
+                    "commands": [
+                        "git apply telegram/Telegram/Patches/qtbase_5_6_0.diff"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "qt5-qtimageformats",
+            "cleanup-platform": [ "/bin", "/mkspecs" ],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "git://code.qt.io/qt/qtimageformats.git",
+                    "branch": "v5.6.1"
+                },
+                {
+                    "type": "script",
+                    "commands": [ "qmake" ],
+                    "dest-filename": "configure"
+                }
+            ]
+        },
+        {
+            "name": "metalang",
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://github.com/telegramdesktop/tdesktop.git"
+                },
+                {
+                    "type": "script",
+                    "commands": [ "qmake Telegram/build/qmake/codegen_style/codegen_style.pro" ],
+                    "dest-filename" : "configure"
+                }
+            ]
+        },
+        {
+            "name": "gnome-doc-utils",
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "http://ftp.gnome.org/pub/GNOME/sources/gnome-doc-utils/0.20/gnome-doc-utils-0.20.10.tar.xz",
+                    "sha256": "cb0639ffa9550b6ddf3b62f3b1add92fb92ab4690d351f2353cffe668be8c4a6"
+                }
+            ]
+        },
+        {
+            "name": "libdbusmenu",
+            "config-opts": [ "--with-gtk=2", "-disable-static", "--disable-tests", "--disable-gtk-doc", "--disable-doc", "--disable-dumper", "--enable-introspection=no", "--disable-vala"],
+            "build-options" : {
+                "env": {
+                    "HAVE_VALGRIND_TRUE": "'#'",
+                    "HAVE_VALGRIND_FALSE": "''"
+                }
+            },
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://launchpad.net/libdbusmenu/12.10/12.10.2/+download/libdbusmenu-12.10.2.tar.gz",
+                    "sha256": "9d6ad4a0b918b342ad2ee9230cce8a095eb601cb0cee6ddc1122d0481f9d04c9"
+                }
+            ]
+        },
+        {
+            "name": "libindicator",
+            "config-opts": [ "--with-gtk=2", "-disable-static", "--disable-tests", "--disable-gtk-doc"],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://launchpad.net/libindicator/12.10/12.10.1/+download/libindicator-12.10.1.tar.gz",
+                    "sha256": "b2d2e44c10313d5c9cd60db455d520f80b36dc39562df079a3f29495e8f9447f"
+                },
+                {
+                    "type": "shell",
+                    "commands": [
+                          "sed '/-Werror/s/$/ -Wno-deprecated-declarations/' -i libindicator/Makefile.{am,in}",
+                          "sed 's/LIBINDICATOR_LIBS+=\"$LIBM\"/LIBINDICATOR_LIBS+=\" $LIBM\"/g' -i configure",
+                          "sed 's/LIBM=\"-lmw\"/LIBM=\" -lmw\"/g' -i configure",
+                          "sed 's/LIBM=\"-lm\"/LIBM=\" -lm\"/g' -i configure",
+                          "sed 's/LIBS=\"-lm  $LIBS\"/LIBS=\" -lm  $LIBS\"/g' -i configure",
+                          "sed 's/LIBS=\"-lmw  $LIBS\"/LIBS=\" -lmw  $LIBS\"/g' -i configure"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "dbus-glib",
+            "config-opts": [ "--disable-static", "--disable-gtk-doc" ],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "git://anongit.freedesktop.org/dbus/dbus-glib"
+                }
+            ]
+        },
+        {
+            "name": "libappindicator",
+            "config-opts": [ "-disable-static", "--disable-tests", "--disable-gtk-doc", "--enable-introspection=no"],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://launchpad.net/libappindicator/12.10/12.10.0/+download/libappindicator-12.10.0.tar.gz",
+                    "sha256": "d5907c1f98084acf28fd19593cb70672caa0ca1cf82d747ba6f4830d4cc3b49f"
+                },
+                {
+                    "type": "patch",
+                    "path": "libappindicator-disable-python-bindings.patch"
+                }
+            ]
+        },
+        {
+            "name": "openAL",
+            "cmake": true,
+            "sources": [
+                 {
+                    "type": "git",
+                    "url": "https://github.com/kcat/openal-soft.git"
+                 }
+            ]
+        },
+        {
+            "name": "libva",
+            "config-opts": [ "--enable-static" ],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "git://anongit.freedesktop.org/git/libva"
+                }
+            ]
+        },
+        {
+            "name": "opus",
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "http://downloads.xiph.org/releases/opus/opus-1.1.tar.gz",
+                    "sha256": "b9727015a58affcf3db527322bf8c4d2fcf39f5f6b8f15dbceca20206cbe1d95"
+                }
+            ]
+        },
+        {
+            "name": "ffmpeg",
+            "config-opts": [
+                "--disable-programs",
+                "--disable-doc",
+                "--disable-pthreads",
+                "--disable-mmx",
+                "--disable-everything",
+                "--enable-libopus",
+                "--enable-decoder=aac",
+                "--enable-decoder=aac_latm",
+                "--enable-decoder=aasc",
+                "--enable-decoder=flac",
+                "--enable-decoder=gif",
+                "--enable-decoder=h264",
+                "--enable-decoder=h264_vdpau",
+                "--enable-decoder=mp1",
+                "--enable-decoder=mp1float",
+                "--enable-decoder=mp2",
+                "--enable-decoder=mp2float",
+                "--enable-decoder=mp3",
+                "--enable-decoder=mp3adu",
+                "--enable-decoder=mp3adufloat",
+                "--enable-decoder=mp3float",
+                "--enable-decoder=mp3on4",
+                "--enable-decoder=mp3on4float",
+                "--enable-decoder=mpeg4",
+                "--enable-decoder=mpeg4_vdpau",
+                "--enable-decoder=msmpeg4v2",
+                "--enable-decoder=msmpeg4v3",
+                "--enable-decoder=opus",
+                "--enable-decoder=vorbis",
+                "--enable-decoder=wavpack",
+                "--enable-decoder=wmalossless",
+                "--enable-decoder=wmapro",
+                "--enable-decoder=wmav1",
+                "--enable-decoder=wmav2",
+                "--enable-decoder=wmavoice",
+                "--enable-encoder=libopus",
+                "--enable-hwaccel=h264_vaapi",
+                "--enable-hwaccel=h264_vdpau",
+                "--enable-hwaccel=mpeg4_vaapi",
+                "--enable-hwaccel=mpeg4_vdpau",
+                "--enable-parser=aac",
+                "--enable-parser=aac_latm",
+                "--enable-parser=flac",
+                "--enable-parser=h264",
+                "--enable-parser=mpeg4video",
+                "--enable-parser=mpegaudio",
+                "--enable-parser=opus",
+                "--enable-parser=vorbis",
+                "--enable-demuxer=aac",
+                "--enable-demuxer=flac",
+                "--enable-demuxer=gif",
+                "--enable-demuxer=h264",
+                "--enable-demuxer=mov",
+                "--enable-demuxer=mp3",
+                "--enable-demuxer=ogg",
+                "--enable-demuxer=wav",
+                "--enable-muxer=ogg",
+                "--enable-muxer=opus"
+            ],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://github.com/FFmpeg/FFmpeg.git",
+                    "branch": "release/3.0"
+                }
+            ]
+        },
+        {
+            "name": "telegram-desktop",
+            "post-install": [
+                "strip -s \"Linux/Release/Telegram\"",
+
+                "install -dm755 \"/app/bin\"",
+                "install -m755 \"Linux/Release/Telegram\" \"/app/bin/telegram-desktop\"",
+
+                "install -d \"/app/share/applications\"",
+                "echo \"[Desktop Entry]
+                        Encoding=UTF-8
+                        Version=1.0
+                        Name=Telegram Desktop
+                        Comment=Official desktop version of Telegram messaging app
+                        Exec=telegram-desktop -- %u
+                        Icon=telegram-desktop
+                        Terminal=false
+                        StartupWMClass=telegram-desktop
+                        Type=Application
+                        Categories=Network;
+                        MimeType=x-scheme-handler/tg;\" > /app/share/applications/telegram-desktop.desktop",
+
+                "install -d \"/app/share/kservices5\"",
+                "echo \"[Protocol]
+                        exec=telegram-desktop -- %u
+                        protocol=tg
+                        input=none
+                        output=none
+                        helper=true
+                        listing=false
+                        reading=false
+                        writing=false
+                        makedir=false
+                        deleting=false\" > /app/share/kservices5/tg.protocol",
+
+                "for icon_size in 16 32 48 64 128 256 512; do
+                     install -d \"/app/share/icons/hicolor/${icon_size}x${icon_size}/apps\"
+                     install -m644 \"Telegram/Resources/art/icon${icon_size}.png\" \"/app/share/icons/hicolor/${icon_size}x${icon_size}/apps/telegram-desktop.png\"
+                 done"
+            ],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://github.com/telegramdesktop/tdesktop.git"
+                },
+                {
+                    "type": "patch",
+                    "path": "telegram.patch"
+                },
+                {
+                    "type": "shell",
+                    "commands": [
+                        "echo '#! /bin/sh\necho \"Using an empty script to avoid failure on missing configure file\"' > configure",
+                        "echo '# Empty makefile\n\nall:\n\techo \"Using an empty makefile doing nothing\"\n\ninstall:\n\techo \"Using an empty makefile doing nothing\"' > Makefile",
+                        "chmod +x configure"
+                    ]
+                },
+                {
+                    "type": "shell",
+                    "commands": [
+                        "mkdir -p Linux/obj/codegen_numbers/Release",
+                        "cd Linux/obj/codegen_numbers/Release && qmake CONFIG+=release ../../../../Telegram/build/qmake/codegen_numbers/codegen_numbers.pro",
+                        "cd Linux/obj/codegen_numbers/Release && make"
+                    ]
+                },
+                   {
+                    "type": "shell",
+                    "commands": [
+                        "mkdir -p Linux/obj/codegen_style/Release",
+                        "cd Linux/obj/codegen_style/Release && qmake CONFIG+=release ../../../../Telegram/build/qmake/codegen_style/codegen_style.pro",
+                        "cd Linux/obj/codegen_style/Release && make"
+                    ]
+                },
+                {
+                    "type": "shell",
+                    "commands": [
+                        "mkdir -p Linux/ReleaseIntermediateLang",
+                        "cd Linux/ReleaseIntermediateLang && qmake CONFIG+=release ../../Telegram/MetaLang.pro",
+                        "cd Linux/ReleaseIntermediateLang && make"
+                    ]
+                },
+                {
+                    "type": "shell",
+                    "commands": [
+                        "echo 'QT += gui-private core-private' >> Telegram/Telegram.pro",
+                        "echo 'DEFINES += TDESKTOP_DISABLE_CRASH_REPORTS TDESKTOP_DISABLE_UNITY_INTEGRATION' >> Telegram/Telegram.pro",
+                        "sed -i 's/CUSTOM_API_ID//g' Telegram/Telegram.pro",
+                        "mkdir -p Linux/ReleaseIntermediate",
+                        "cd Linux/ReleaseIntermediate && qmake CONFIG+=release ../../Telegram/Telegram.pro",
+                        "cd Linux/ReleaseIntermediate && make"
+                    ]
+                }
+            ]
+        }
+    ]
+}
