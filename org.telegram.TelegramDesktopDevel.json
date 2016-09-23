@@ -6,6 +6,7 @@
     "sdk": "org.gnome.Sdk",
     "command": "telegram-desktop",
     "rename-desktop-file": "telegram-desktop.desktop",
+    "rename-appdata-file": "telegram-desktop.appdata.xml",
     "rename-icon": "telegram-desktop",
     "tags": ["nightly"],
     "desktop-file-name-prefix": "(Nightly) ",
@@ -37,33 +38,34 @@
     "modules": [
         {
             "name": "qt5-qtbase",
-            "cleanup-platform": [ "/bin", "/mkspecs" ],
+            "cleanup-platform": [ "/bin" ],
             "config-opts": [ "--confirm-license", "--opensource",
                              "--release", "--shared",
                              "-platform", "linux-g++",
-                             "-optimized-qmake",
-                             "-nomake", "examples",
-                             "-nomake", "tests",
-                             "-system-harfbuzz",
-                             "-system-sqlite",
-                             "-no-alsa",
                              "-accessibility",
                              "-dbus-linked",
                              "-fontconfig",
                              "-glib",
                              "-iconv",
                              "-icu",
-                             "-openssl-linked",
+                             "-no-alsa",
                              "-no-pch",
                              "-no-rpath",
                              "-no-separate-debug-info",
-                             "-reduce-relocations",
                              "-no-directfb",
                              "-no-linuxfb",
                              "-no-kms",
                              "-no-cups",
+                             "-no-gtkstyle",
+                             "-nomake", "examples",
+                             "-nomake", "tests",
+                             "-openssl-linked",
+                             "-optimized-qmake",
                              "-system-proxies",
+                             "-system-harfbuzz",
+                             "-system-sqlite",
                              "-static",
+                             "-reduce-relocations",
 
                              "-archdatadir", "/usr/lib/"
                            ],
@@ -103,16 +105,32 @@
             ]
         },
         {
-            "name": "metalang",
+            "name": "qt5-qtwayland",
+            "cleanup-platform": [ "/bin", "/mkspecs" ],
             "sources": [
                 {
                     "type": "git",
-                    "url": "https://github.com/telegramdesktop/tdesktop.git"
+                    "url": "git://code.qt.io/qt/qtwayland.git",
+                    "branch": "v5.6.1"
                 },
                 {
                     "type": "script",
-                    "commands": [ "qmake Telegram/build/qmake/codegen_style/codegen_style.pro" ],
-                    "dest-filename" : "configure"
+                    "commands": [ "qmake" ],
+                    "dest-filename": "configure"
+                }
+            ]
+        },
+        {
+            "name": "google-breakpad",
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://chromium.googlesource.com/breakpad/breakpad"
+                },
+                {
+                    "type": "git",
+                    "url": "https://chromium.googlesource.com/linux-syscall-support",
+                    "dest": "src/third_party/lss"
                 }
             ]
         },
@@ -162,6 +180,16 @@
                           "sed 's/LIBS=\"-lm  $LIBS\"/LIBS=\" -lm  $LIBS\"/g' -i configure",
                           "sed 's/LIBS=\"-lmw  $LIBS\"/LIBS=\" -lmw  $LIBS\"/g' -i configure"
                     ]
+                }
+            ]
+        },
+        {
+            "name": "dee",
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://launchpad.net/dee/1.0/1.2.7/+download/dee-1.2.7.tar.gz",
+                    "sha256": "1bf0336ce684aa0f48d6eae2469628c1a9b43695a77443bc31a5790aa673bf8a"
                 }
             ]
         },
@@ -286,17 +314,17 @@
                 {
                     "type": "git",
                     "url": "https://github.com/FFmpeg/FFmpeg.git",
-                    "branch": "release/3.0"
+                    "branch": "release/3.1"
                 }
             ]
         },
         {
             "name": "telegram-desktop",
             "post-install": [
-                "strip -s \"Linux/Release/Telegram\"",
+                "strip -s \"out/Release/Telegram\"",
 
                 "install -dm755 \"/app/bin\"",
-                "install -m755 \"Linux/Release/Telegram\" \"/app/bin/telegram-desktop\"",
+                "install -m755 \"out/Release/Telegram\" \"/app/bin/telegram-desktop\"",
 
                 "install -d \"/app/share/applications\"",
                 "echo \"[Desktop Entry]
@@ -311,6 +339,9 @@
                         Type=Application
                         Categories=Network;
                         MimeType=x-scheme-handler/tg;\" > /app/share/applications/telegram-desktop.desktop",
+
+                "install -d \"/app/share/appdata\"",
+                "install -m644 \"lib/xdg/telegramdesktop.appdata.xml\" \"/app/share/appdata/telegram-desktop.appdata.xml\"",
 
                 "install -d \"/app/share/kservices5\"",
                 "echo \"[Protocol]
@@ -348,38 +379,16 @@
                     ]
                 },
                 {
-                    "type": "shell",
-                    "commands": [
-                        "mkdir -p Linux/obj/codegen_numbers/Release",
-                        "cd Linux/obj/codegen_numbers/Release && qmake CONFIG+=release ../../../../Telegram/build/qmake/codegen_numbers/codegen_numbers.pro",
-                        "cd Linux/obj/codegen_numbers/Release && make"
-                    ]
-                },
-                   {
-                    "type": "shell",
-                    "commands": [
-                        "mkdir -p Linux/obj/codegen_style/Release",
-                        "cd Linux/obj/codegen_style/Release && qmake CONFIG+=release ../../../../Telegram/build/qmake/codegen_style/codegen_style.pro",
-                        "cd Linux/obj/codegen_style/Release && make"
-                    ]
+                    "type": "git",
+                    "url": "https://chromium.googlesource.com/external/gyp",
+                    "dest": "Libraries/gyp"
                 },
                 {
                     "type": "shell",
                     "commands": [
-                        "mkdir -p Linux/ReleaseIntermediateLang",
-                        "cd Linux/ReleaseIntermediateLang && qmake CONFIG+=release ../../Telegram/MetaLang.pro",
-                        "cd Linux/ReleaseIntermediateLang && make"
-                    ]
-                },
-                {
-                    "type": "shell",
-                    "commands": [
-                        "echo 'QT += gui-private core-private' >> Telegram/Telegram.pro",
-                        "echo 'DEFINES += TDESKTOP_DISABLE_CRASH_REPORTS TDESKTOP_DISABLE_UNITY_INTEGRATION' >> Telegram/Telegram.pro",
-                        "sed -i 's/CUSTOM_API_ID//g' Telegram/Telegram.pro",
-                        "mkdir -p Linux/ReleaseIntermediate",
-                        "cd Linux/ReleaseIntermediate && qmake CONFIG+=release ../../Telegram/Telegram.pro",
-                        "cd Linux/ReleaseIntermediate && make"
+                        "cd Libraries/gyp && git apply ../../Telegram/Patches/gyp.diff",
+                        "cd Telegram && gyp/refresh.sh",
+                        "cd out/Release && make"
                     ]
                 }
             ]
