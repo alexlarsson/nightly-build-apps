@@ -1,9 +1,9 @@
 {
     "id": "org.telegram.TelegramDesktopDevel",
     "branch": "master",
-    "runtime": "org.gnome.Platform",
-    "runtime-version": "3.20",
-    "sdk": "org.gnome.Sdk",
+    "runtime": "org.kde.Platform",
+    "runtime-version": "master",
+    "sdk": "org.kde.Sdk",
     "command": "telegram-desktop",
     "rename-desktop-file": "telegram-desktop.desktop",
     "rename-appdata-file": "telegram-desktop.appdata.xml",
@@ -11,13 +11,18 @@
     "tags": ["nightly"],
     "desktop-file-name-prefix": "(Nightly) ",
     "writable-sdk": true,
-    "finish-args": ["--share=ipc", "--share=network", "--socket=x11", "--filesystem=host", "--socket=pulseaudio" ],
+    "finish-args": [ "--share=ipc",
+                     "--share=network",
+                     "--socket=x11",
+                     "--socket=pulseaudio",
+                     "--socket=session-bus",
+                     "--filesystem=host",
+                     "--device=dri" ],
     "cleanup": [ "/cache",
                  "/man",
                  "/share/man",
                  "/lib/systemd",
-                 "/lib/libQt5*",
-                 "*.la"],
+                 "*.la", "*.a"],
     "cleanup-commands": [ "touch -d @0 /usr/share/fonts",
                           "touch -d @0 /usr/share/fonts/*",
                           "fc-cache -fs"
@@ -37,86 +42,80 @@
     },
     "modules": [
         {
-            "name": "qt5-qtbase",
-            "cleanup-platform": [ "/bin" ],
-            "config-opts": [ "--confirm-license", "--opensource",
-                             "--release", "--shared",
-                             "-platform", "linux-g++",
-                             "-accessibility",
-                             "-dbus-linked",
-                             "-fontconfig",
-                             "-glib",
-                             "-iconv",
-                             "-icu",
-                             "-no-alsa",
-                             "-no-pch",
-                             "-no-rpath",
-                             "-no-separate-debug-info",
-                             "-no-directfb",
-                             "-no-linuxfb",
-                             "-no-kms",
-                             "-no-cups",
-                             "-no-gtkstyle",
-                             "-nomake", "examples",
-                             "-nomake", "tests",
-                             "-openssl-linked",
-                             "-optimized-qmake",
-                             "-system-proxies",
-                             "-system-harfbuzz",
-                             "-system-sqlite",
-                             "-static",
-                             "-reduce-relocations",
-
-                             "-archdatadir", "/usr/lib/"
-                           ],
+            "name": "glib",
+            "config-opts": [ "--with-pcre=system" ],
+            "cleanup-platform": [ "/share/glib-2.0/codegen",
+                                  "/bin/gdbus-codegen",
+                                  "/bin/glib-*",
+                                  "/bin/gobject-query",
+                                  "/bin/gresource",
+                                  "/bin/gtester*" ],
             "sources": [
                 {
-                    "type": "git",
-                    "url": "git://code.qt.io/qt/qtbase.git",
-                    "branch": "v5.6.0"
-                },
-                {
-                    "type": "git",
-                    "url": "https://github.com/telegramdesktop/tdesktop.git",
-                    "dest": "telegram"
+                    "type": "archive",
+                    "url": "https://download.gnome.org/sources/glib/2.50/glib-2.50.2.tar.xz",
+                    "sha256": "be68737c1f268c05493e503b3b654d2b7f43d7d0b8c5556f7e4651b870acfbf5"
                 },
                 {
                     "type": "shell",
-                    "commands": [
-                        "git apply telegram/Telegram/Patches/qtbase_5_6_0.diff"
-                    ]
+                    "commands": [ "rm -rf /usr/share/glib-2.0/codegen/*.pyc" ]
                 }
             ]
         },
         {
-            "name": "qt5-qtimageformats",
-            "cleanup-platform": [ "/bin", "/mkspecs" ],
+            "name": "atk",
             "sources": [
                 {
-                    "type": "git",
-                    "url": "git://code.qt.io/qt/qtimageformats.git",
-                    "branch": "v5.6.1"
-                },
-                {
-                    "type": "script",
-                    "commands": [ "qmake" ],
-                    "dest-filename": "configure"
+                    "type": "archive",
+                    "url": "https://download.gnome.org/sources/atk/2.22/atk-2.22.0.tar.xz",
+                    "sha256": "d349f5ca4974c9c76a4963e5b254720523b0c78672cbc0e1a3475dbd9b3d44b6"
                 }
             ]
         },
         {
-            "name": "qt5-qtwayland",
-            "cleanup-platform": [ "/bin", "/mkspecs" ],
+            "name": "at-spi2-core",
             "sources": [
                 {
-                    "type": "git",
-                    "url": "git://code.qt.io/qt/qtwayland.git",
-                    "branch": "v5.6.1"
-                },
+                    "type": "archive",
+                    "url": "https://download.gnome.org/sources/at-spi2-core/2.21/at-spi2-core-2.21.4.tar.xz",
+                    "sha256": "4d996ac71c7c30c863362a0bf86e8c9803b1a189c9135ead8efe3dcac67621fe"
+                }
+            ]
+        },
+        {
+            "name": "at-spi2-atk",
+            "sources": [
                 {
-                    "type": "script",
-                    "commands": [ "qmake" ],
-                    "dest-filename": "configure"
+                    "type": "archive",
+                    "url": "https://download.gnome.org/sources/at-spi2-atk/2.21/at-spi2-atk-2.21.91.tar.xz",
+                    "sha256": "a6b0eaa18c87d66b9e8d3e1a0687c31abea9e1e9c4a90f49f0f2dfb5e5714950"
+                }
+            ]
+        },
+        {
+            "name": "pango",
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://download.gnome.org/sources/pango/1.40/pango-1.40.3.tar.xz",
+                    "sha256": "abba8b5ce728520c3a0f1535eab19eac3c14aeef7faa5aded90017ceac2711d3"
+                }
+            ]
+        },
+        {
+            "name": "gtk3",
+            "config-opts": [ "--enable-xkb",
+                             "--enable-xinerama",
+                             "--enable-xrandr",
+                             "--enable-xfixes",
+                             "--enable-xcomposite",
+                             "--enable-xdamage",
+                             "--enable-x11-backend" ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://download.gnome.org/sources/gtk+/3.22/gtk+-3.22.6.tar.xz",
+                    "sha256": "eba75a216a117f4391beb2971ba20ff8a1823f109893f0ab6c2eac2210ea172f"
                 }
             ]
         },
@@ -146,7 +145,7 @@
         },
         {
             "name": "libdbusmenu",
-            "config-opts": [ "--with-gtk=2", "-disable-static", "--disable-tests", "--disable-gtk-doc", "--disable-doc", "--disable-dumper", "--enable-introspection=no", "--disable-vala"],
+            "config-opts": [ "--with-gtk=3", "-disable-static", "--disable-tests", "--disable-gtk-doc", "--disable-doc", "--disable-dumper", "--enable-introspection=no", "--disable-vala"],
             "build-options" : {
                 "env": {
                     "HAVE_VALGRIND_TRUE": "'#'",
@@ -156,14 +155,14 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://launchpad.net/libdbusmenu/12.10/12.10.2/+download/libdbusmenu-12.10.2.tar.gz",
-                    "sha256": "9d6ad4a0b918b342ad2ee9230cce8a095eb601cb0cee6ddc1122d0481f9d04c9"
+                    "url": "https://launchpad.net/libdbusmenu/16.04/16.04.0/+download/libdbusmenu-16.04.0.tar.gz",
+                    "sha256": "b9cc4a2acd74509435892823607d966d424bd9ad5d0b00938f27240a1bfa878a"
                 }
             ]
         },
         {
             "name": "libindicator",
-            "config-opts": [ "--with-gtk=2", "-disable-static", "--disable-tests", "--disable-gtk-doc"],
+            "config-opts": [ "--with-gtk=3", "-disable-static", "--disable-tests", "--disable-gtk-doc"],
             "sources": [
                 {
                     "type": "archive",
@@ -195,17 +194,19 @@
         },
         {
             "name": "dbus-glib",
-            "config-opts": [ "--disable-static", "--disable-gtk-doc" ],
+            "config-opts": [ "--disable-static" ],
             "sources": [
                 {
-                    "type": "git",
-                    "url": "git://anongit.freedesktop.org/dbus/dbus-glib"
+                    "type": "archive",
+                    "url": "https://dbus.freedesktop.org/releases/dbus-glib/dbus-glib-0.106.tar.gz",
+                    "sha256": "b38952706dcf68bad9c302999ef0f420b8cf1a2428227123f0ac4764b689c046"
+
                 }
             ]
         },
         {
             "name": "libappindicator",
-            "config-opts": [ "-disable-static", "--disable-tests", "--disable-gtk-doc", "--enable-introspection=no"],
+            "config-opts": [ "-disable-static", "--disable-tests", "--disable-gtk-doc", "--enable-introspection=no", "--with-gtk=3" ],
             "sources": [
                 {
                     "type": "archive",
@@ -214,7 +215,7 @@
                 },
                 {
                     "type": "patch",
-                    "path": "libappindicator-disable-python-bindings.patch"
+                    "path": "patches/libappindicator/libappindicator-disable-python-bindings.patch"
                 }
             ]
         },
@@ -223,8 +224,9 @@
             "cmake": true,
             "sources": [
                  {
-                    "type": "git",
-                    "url": "https://github.com/kcat/openal-soft.git"
+                    "type": "archive",
+                    "url": "https://github.com/kcat/openal-soft/archive/openal-soft-1.17.2.tar.gz",
+                    "sha256": "11ea176f6cbf9763dbce0953dd77ab72d032b4ad95f07afffb91844abb174033"
                  }
             ]
         },
@@ -234,7 +236,7 @@
             "sources": [
                 {
                     "type": "git",
-                    "url": "git://anongit.freedesktop.org/git/libva"
+                    "url": "https://github.com/01org/libva.git"
                 }
             ]
         },
@@ -319,7 +321,30 @@
             ]
         },
         {
+            "name": "gyp",
+            "no-autogen": true,
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://chromium.googlesource.com/external/gyp"
+                },
+                {
+                    "type": "shell",
+                    "commands": [
+                        "python2 setup.py install"
+                    ]
+                },
+                {
+                    "type": "shell",
+                    "commands": [
+                        "echo '# Empty makefile\n\nall:\n\techo \"Using an empty makefile doing nothing\"\n\ninstall:\n\techo \"Using an empty makefile doing nothing\"' > Makefile"
+                    ]
+                }
+            ]
+        },
+        {
             "name": "telegram-desktop",
+            "no-autogen": true,
             "post-install": [
                 "strip -s \"out/Release/Telegram\"",
 
@@ -330,7 +355,7 @@
                 "echo \"[Desktop Entry]
                         Encoding=UTF-8
                         Version=1.0
-                        Name=Telegram Desktop
+                        Name=Telegram desktop
                         Comment=Official desktop version of Telegram messaging app
                         Exec=telegram-desktop -- %u
                         Icon=telegram-desktop
@@ -368,26 +393,40 @@
                 },
                 {
                     "type": "patch",
-                    "path": "telegram.patch"
+                    "path": "patches/telegram/Avoid-depending-on-static-libraries.patch"
+                },
+                {
+                    "type": "patch",
+                    "path": "patches/telegram/Fix-desktop-integration-issues.patch"
+                },
+                {
+                    "type": "patch",
+                    "path": "patches/telegram/Fix-rcc-path.patch"
+                },
+                {
+                    "type": "patch",
+                    "path": "patches/telegram/Flags-for-precompiled-header-and-MOC.patch"
+                },
+                {
+                    "type": "patch",
+                    "path": "patches/telegram/Use-gtk3-headers.patch"
+                },
+                {
+                    "type": "file",
+                    "path": "patches/telegram/CMakeLists.inj"
                 },
                 {
                     "type": "shell",
                     "commands": [
-                        "echo '#! /bin/sh\necho \"Using an empty script to avoid failure on missing configure file\"' > configure",
-                        "echo '# Empty makefile\n\nall:\n\techo \"Using an empty makefile doing nothing\"\n\ninstall:\n\techo \"Using an empty makefile doing nothing\"' > Makefile",
-                        "chmod +x configure"
+                        "echo '# Empty makefile\n\nall:\n\techo \"Using an empty makefile doing nothing\"\n\ninstall:\n\techo \"Using an empty makefile doing nothing\"' > Makefile"
                     ]
                 },
                 {
-                    "type": "git",
-                    "url": "https://chromium.googlesource.com/external/gyp",
-                    "dest": "Libraries/gyp"
-                },
-                {
                     "type": "shell",
                     "commands": [
-                        "cd Libraries/gyp && git apply ../../Telegram/Patches/gyp.diff",
-                        "cd Telegram && gyp/refresh.sh",
+                        "gyp -Gconfig=Release --depth=Telegram/gyp --generator-output=../.. -Goutput_dir=out Telegram/gyp/Telegram.gyp --format=cmake",
+                        "NUM=$((`wc -l < out/Release/CMakeLists.txt` - 2)); sed -i \"$NUM r CMakeLists.inj\" out/Release/CMakeLists.txt",
+                        "cd out/Release && cmake . -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=None",
                         "cd out/Release && make"
                     ]
                 }
