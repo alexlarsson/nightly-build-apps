@@ -53,8 +53,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://download.gnome.org/sources/glib/2.50/glib-2.50.2.tar.xz",
-                    "sha256": "be68737c1f268c05493e503b3b654d2b7f43d7d0b8c5556f7e4651b870acfbf5"
+                    "url": "https://download.gnome.org/sources/glib/2.50/glib-2.50.3.tar.xz",
+                    "sha256": "82ee94bf4c01459b6b00cb9db0545c2237921e3060c0b74cff13fbc020cfd999"
                 },
                 {
                     "type": "shell",
@@ -116,6 +116,43 @@
                     "type": "archive",
                     "url": "https://download.gnome.org/sources/gtk+/3.22/gtk+-3.22.6.tar.xz",
                     "sha256": "eba75a216a117f4391beb2971ba20ff8a1823f109893f0ab6c2eac2210ea172f"
+                }
+            ]
+        },
+        {
+            "name": "libcroco",
+            "config-opts": ["--disable-static"],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://download.gnome.org/sources/libcroco/0.6/libcroco-0.6.11.tar.xz",
+                    "sha256": "132b528a948586b0dfa05d7e9e059901bca5a3be675b6071a90a90b81ae5a056"
+                }
+            ]
+        },
+        {
+            "name": "librsvg",
+            "config-opts": ["--disable-static"],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://download.gnome.org/sources/librsvg/2.40/librsvg-2.40.16.tar.xz",
+                    "sha256": "d48bcf6b03fa98f07df10332fb49d8c010786ddca6ab34cbba217684f533ff2e"
+                },
+                {
+                    "type": "shell",
+                    /* Work around the loader files being in the base,install editing it in-place */
+                    "commands": [ "rm -rf /usr/lib/gdk-pixbuf-2.0/*/loaders.cache" ]
+                }
+            ]
+        },
+        {
+            "name": "adwaita-icon-theme",
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://download.gnome.org/sources/adwaita-icon-theme/3.22/adwaita-icon-theme-3.22.0.tar.xz",
+                    "sha256": "c18bf6e26087d9819a962c77288b291efab25d0419b73d909dd771716a45dcb7"
                 }
             ]
         },
