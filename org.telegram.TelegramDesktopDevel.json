@@ -33,9 +33,10 @@
                           "/lib/pkgconfig",
                           "*.a"
                         ],
-     "build-options" : {
-        "cflags": "-O2 -g",
-        "cxxflags": "-O2 -g",
+    "build-options" : {
+        "cflags": "-O2 -g -Wno-deprecated-declarations -fstack-protector-strong -D_FORTIFY_SOURCE=2",
+        "cxxflags": "-O2 -g -Wno-deprecated-declarations -fstack-protector-strong -D_FORTIFY_SOURCE=2",
+        "ldflags": "-fstack-protector-strong -Wl,-z,relro,-z,now",
         "env": {
             "V": "1"
         }
@@ -44,21 +45,19 @@
         {
             "name": "glib",
             "config-opts": [ "--with-pcre=system" ],
+            "ensure-writable": [ "/share/glib-2.0/codegen/*.pyc" ],
             "cleanup-platform": [ "/share/glib-2.0/codegen",
                                   "/bin/gdbus-codegen",
                                   "/bin/glib-*",
                                   "/bin/gobject-query",
                                   "/bin/gresource",
-                                  "/bin/gtester*" ],
+                                  "/bin/gtester*"
+                               ],
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://download.gnome.org/sources/glib/2.50/glib-2.50.3.tar.xz",
-                    "sha256": "82ee94bf4c01459b6b00cb9db0545c2237921e3060c0b74cff13fbc020cfd999"
-                },
-                {
-                    "type": "shell",
-                    "commands": [ "rm -rf /usr/share/glib-2.0/codegen/*.pyc" ]
+                    "url": "https://download.gnome.org/sources/glib/2.52/glib-2.52.0.tar.xz",
+                    "sha256": "4578e3e077b1b978cafeec8d28b676c680aba0c0475923874c4c993403df311a"
                 }
             ]
         },
@@ -67,8 +66,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://download.gnome.org/sources/atk/2.22/atk-2.22.0.tar.xz",
-                    "sha256": "d349f5ca4974c9c76a4963e5b254720523b0c78672cbc0e1a3475dbd9b3d44b6"
+                    "url": "https://download.gnome.org/sources/atk/2.24/atk-2.24.0.tar.xz",
+                    "sha256": "bb2daa9a808c73a7a79d2983f333e0ba74be42fc51e3ba1faf2551a636487a49"
                 }
             ]
         },
@@ -77,8 +76,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://download.gnome.org/sources/at-spi2-core/2.21/at-spi2-core-2.21.4.tar.xz",
-                    "sha256": "4d996ac71c7c30c863362a0bf86e8c9803b1a189c9135ead8efe3dcac67621fe"
+                    "url": "https://download.gnome.org/sources/at-spi2-core/2.24/at-spi2-core-2.24.0.tar.xz",
+                    "sha256": "6179f314fbd903b3cd3477a57b6b1fecca88b76ce769ce777fda0d3e5f61afcd"
                 }
             ]
         },
@@ -87,8 +86,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://download.gnome.org/sources/at-spi2-atk/2.21/at-spi2-atk-2.21.91.tar.xz",
-                    "sha256": "a6b0eaa18c87d66b9e8d3e1a0687c31abea9e1e9c4a90f49f0f2dfb5e5714950"
+                    "url": "https://download.gnome.org/sources/at-spi2-atk/2.24/at-spi2-atk-2.24.0.tar.xz",
+                    "sha256": "022d68497c05cc65ba7cd2b166132de9a160c8d90e9200b5faa473ef7e784c61"
                 }
             ]
         },
@@ -97,8 +96,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://download.gnome.org/sources/pango/1.40/pango-1.40.3.tar.xz",
-                    "sha256": "abba8b5ce728520c3a0f1535eab19eac3c14aeef7faa5aded90017ceac2711d3"
+                    "url": "https://download.gnome.org/sources/pango/1.40/pango-1.40.4.tar.xz",
+                    "sha256": "f8fdc5fc66356dc4edf915048cceeee065a0e0cb70b3b2598f62bda320129a3e"
                 }
             ]
         },
@@ -111,11 +110,16 @@
                              "--enable-xcomposite",
                              "--enable-xdamage",
                              "--enable-x11-backend" ],
+            "cleanup-platform": [
+                "/bin/gtk3-*",
+                "/bin/gtk-builder-tool",
+                "/bin/gtk-encode-symbolic-svg"
+            ],
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://download.gnome.org/sources/gtk+/3.22/gtk+-3.22.6.tar.xz",
-                    "sha256": "eba75a216a117f4391beb2971ba20ff8a1823f109893f0ab6c2eac2210ea172f"
+                    "url": "https://download.gnome.org/sources/gtk+/3.22/gtk+-3.22.11.tar.xz",
+                    "sha256": "db440670cb6f3c098b076df3735fbc4e69359bd605385e87c90ee48344a804ca"
                 }
             ]
         },
@@ -133,16 +137,12 @@
         {
             "name": "librsvg",
             "config-opts": ["--disable-static"],
+            "ensure-writable": ["/lib/gdk-pixbuf-2.0/*/loaders.cache"],
             "sources": [
                 {
                     "type": "archive",
                     "url": "https://download.gnome.org/sources/librsvg/2.40/librsvg-2.40.16.tar.xz",
                     "sha256": "d48bcf6b03fa98f07df10332fb49d8c010786ddca6ab34cbba217684f533ff2e"
-                },
-                {
-                    "type": "shell",
-                    /* Work around the loader files being in the base,install editing it in-place */
-                    "commands": [ "rm -rf /usr/lib/gdk-pixbuf-2.0/*/loaders.cache" ]
                 }
             ]
         },
@@ -151,8 +151,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://download.gnome.org/sources/adwaita-icon-theme/3.22/adwaita-icon-theme-3.22.0.tar.xz",
-                    "sha256": "c18bf6e26087d9819a962c77288b291efab25d0419b73d909dd771716a45dcb7"
+                    "url": "https://download.gnome.org/sources/adwaita-icon-theme/3.24/adwaita-icon-theme-3.24.0.tar.xz",
+                    "sha256": "ccf79ff3bd340254737ce4d28b87f0ccee4b3358cd3cd5cd11dc7b42f41b272a"
                 }
             ]
         },
@@ -235,9 +235,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://dbus.freedesktop.org/releases/dbus-glib/dbus-glib-0.106.tar.gz",
-                    "sha256": "b38952706dcf68bad9c302999ef0f420b8cf1a2428227123f0ac4764b689c046"
-
+                    "url": "https://dbus.freedesktop.org/releases/dbus-glib/dbus-glib-0.108.tar.gz",
+                    "sha256": "9f340c7e2352e9cdf113893ca77ca9075d9f8d5e81476bf2bf361099383c602c"
                 }
             ]
         },
@@ -389,18 +388,7 @@
                 "install -m755 \"out/Release/Telegram\" \"/app/bin/telegram-desktop\"",
 
                 "install -d \"/app/share/applications\"",
-                "echo \"[Desktop Entry]
-                        Encoding=UTF-8
-                        Version=1.0
-                        Name=Telegram desktop
-                        Comment=Official desktop version of Telegram messaging app
-                        Exec=telegram-desktop -- %u
-                        Icon=telegram-desktop
-                        Terminal=false
-                        StartupWMClass=telegram-desktop
-                        Type=Application
-                        Categories=Network;
-                        MimeType=x-scheme-handler/tg;\" > /app/share/applications/telegram-desktop.desktop",
+                "install -m644 \"lib/xdg/telegramdesktop.desktop\" \"/app/share/applications/telegram-desktop.desktop\"",
 
                 "install -d \"/app/share/appdata\"",
                 "install -m644 \"lib/xdg/telegramdesktop.appdata.xml\" \"/app/share/appdata/telegram-desktop.appdata.xml\"",
@@ -434,6 +422,10 @@
                 },
                 {
                     "type": "patch",
+                    "path": "patches/telegram/Downgrade-Qt-version.patch"
+                },
+                {
+                    "type": "patch",
                     "path": "patches/telegram/Fix-desktop-integration-issues.patch"
                 },
                 {
@@ -443,6 +435,10 @@
                 {
                     "type": "patch",
                     "path": "patches/telegram/Flags-for-precompiled-header-and-MOC.patch"
+                },
+                {
+                    "type": "patch",
+                    "path": "patches/telegram/Remove-Werror-flag.patch"
                 },
                 {
                     "type": "patch",

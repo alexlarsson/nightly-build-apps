@@ -1,3 +1,7 @@
+Description: Eliminates dependencies from static Qt and other libraries
+Author: Nicholas Guriev <guriev-ns@ya.ru>
+Last-Update: 2017-03-31
+
 diff --git a/Telegram/SourceFiles/main.cpp b/Telegram/SourceFiles/main.cpp
 index 0c31e9b..a74129c 100644
 --- a/Telegram/SourceFiles/main.cpp
@@ -12,31 +16,13 @@ index 0c31e9b..a74129c 100644
  	// both are finished in Application::closeApplication
  	Logs::start(); // must be started before Platform is started
  	Platform::start(); // must be started before QApplication is created
-diff --git a/Telegram/SourceFiles/stdafx.cpp b/Telegram/SourceFiles/stdafx.cpp
-index 3cc98b8..7afd662 100644
---- a/Telegram/SourceFiles/stdafx.cpp
-+++ b/Telegram/SourceFiles/stdafx.cpp
-@@ -16,28 +16,70 @@ In addition, as a special exception, the copyright holders give permission
- to link the code of portions of this program with the OpenSSL library.
-
- Full license: https://github.com/telegramdesktop/tdesktop/blob/master/LICENSE
--Copyright (c) 2014-2017 John Preston, https://desktop.telegram.org
-+Copyright (c) 2009-2017 Various Qt Authors
- */
- #include "stdafx.h"
--#include <QtCore/QtPlugin>
--
--#ifdef Q_OS_WINRT
--//Q_IMPORT_PLUGIN(QWinRTIntegrationPlugin)
--//Q_IMPORT_PLUGIN(QWbmpPlugin)
--#elif defined Q_OS_WIN // Q_OS_WINRT
--Q_IMPORT_PLUGIN(QWebpPlugin)
--Q_IMPORT_PLUGIN(QWindowsIntegrationPlugin)
--#elif defined Q_OS_MAC // Q_OS_WIN
--Q_IMPORT_PLUGIN(QWebpPlugin)
--Q_IMPORT_PLUGIN(QCocoaIntegrationPlugin)
--Q_IMPORT_PLUGIN(QGenericEnginePlugin)
--#elif defined Q_OS_LINUX // Q_OS_LINUX
+diff --git a/Telegram/SourceFiles/qt_static_plugins.cpp b/Telegram/SourceFiles/qt_static_plugins.cpp
+--- a/Telegram/SourceFiles/qt_static_plugins.cpp
++++ b/Telegram/SourceFiles/qt_static_plugins.cpp
+@@ -28,12 +28,4 @@ Q_IMPORT_PLUGIN(QWebpPlugin)
+ Q_IMPORT_PLUGIN(QCocoaIntegrationPlugin)
+ Q_IMPORT_PLUGIN(QGenericEnginePlugin)
+ #elif defined Q_OS_LINUX // Q_OS_WIN | Q_OS_MAC
 -Q_IMPORT_PLUGIN(QWebpPlugin)
 -Q_IMPORT_PLUGIN(QXcbIntegrationPlugin)
 -Q_IMPORT_PLUGIN(QConnmanEnginePlugin)
@@ -45,7 +31,15 @@ index 3cc98b8..7afd662 100644
 -Q_IMPORT_PLUGIN(QComposePlatformInputContextPlugin)
 -Q_IMPORT_PLUGIN(QIbusPlatformInputContextPlugin)
 -Q_IMPORT_PLUGIN(QFcitxPlatformInputContextPlugin)
--#endif
+ #endif // Q_OS_WIN | Q_OS_MAC | Q_OS_LINUX
+diff --git a/Telegram/SourceFiles/stdafx.cpp b/Telegram/SourceFiles/stdafx.cpp
+index e7f5b54..fe92aed 100644
+--- a/Telegram/SourceFiles/stdafx.cpp
++++ b/Telegram/SourceFiles/stdafx.cpp
+@@ -21,3 +21,67 @@ Copyright (c) 2014-2017 John Preston, https://desktop.telegram.org
+ #include "stdafx.h"
+
+ // Precompiled header helper.
 +
 +/* This file contains some code from Qt source to ensure successful build.
 + * TODO: find a dynamic library with these symbols.
@@ -111,10 +105,9 @@ index 3cc98b8..7afd662 100644
 +        flags |= QTextItem::StrikeOut;
 +}
 diff --git a/Telegram/SourceFiles/ui/text/text_block.cpp b/Telegram/SourceFiles/ui/text/text_block.cpp
-index d7597f8..3a50097 100644
 --- a/Telegram/SourceFiles/ui/text/text_block.cpp
 +++ b/Telegram/SourceFiles/ui/text/text_block.cpp
-@@ -335,7 +335,7 @@ TextBlock::TextBlock(const style::font &font, const QString &str, QFixed minResi
+@@ -330,7 +330,7 @@ TextBlock::TextBlock(const style::font &font, const QString &str, QFixed minResi
  		SignalHandlers::setCrashAnnotationRef("CrashString", &part);
 
  		QStackTextEngine engine(part, blockFont->f);
@@ -150,10 +143,9 @@ index 2503f1e..92415ea 100644
        '<(sp_media_key_tap_loc)',
      ],
 diff --git a/Telegram/gyp/qt.gypi b/Telegram/gyp/qt.gypi
-index 24ededb..0cfd178 100644
 --- a/Telegram/gyp/qt.gypi
 +++ b/Telegram/gyp/qt.gypi
-@@ -27,21 +27,18 @@
+@@ -27,25 +27,22 @@
                [ 'build_macold', {
                  'qt_version%': '5.3.2',
                }, {
@@ -172,12 +164,16 @@ index 24ededb..0cfd178 100644
 -            'qtharfbuzzng',
            ],
            'qt_version%': '<(qt_version)',
--          'linux_path_qt%': '/usr/local/tdesktop/Qt-<(qt_version)',
-+          'linux_path_qt%': '/usr/lib/',
+           'conditions': [
+             [ 'build_macold', {
+               'linux_path_qt%': '/usr/local/macold/Qt-<(qt_version)',
+             }, {
+-              'linux_path_qt%': '/usr/local/tdesktop/Qt-<(qt_version)',
++              'linux_path_qt%': '/usr/lib',
+             }]
+           ]
          },
-         'qt_version%': '<(qt_version)',
-         'qt_loc_unix': '<(linux_path_qt)',
-@@ -79,19 +77,14 @@
+@@ -85,19 +82,14 @@
              ],
            }],
            [ 'build_linux', {
@@ -200,7 +196,7 @@ index 24ededb..0cfd178 100644
                'Xi',
                'Xext',
                'Xfixes',
-@@ -103,7 +96,6 @@
+@@ -109,7 +101,6 @@
                'xcb-shm',
                'xcb-xfixes',
                'xcb-render',
@@ -208,8 +204,8 @@ index 24ededb..0cfd178 100644
              ],
            }],
          ],
-@@ -130,9 +122,9 @@
-     ],
+@@ -141,9 +141,9 @@
+     'qt_moc_list_sources_arg': '--moc-prefix SHARED_INTERMEDIATE_DIR/<(_target_name)/moc/moc_',
 
      'linux_path_xkbcommon%': '/usr/local',
 -    'linux_lib_ssl%': '/usr/local/ssl/lib/libssl.a',
@@ -221,7 +217,7 @@ index 24ededb..0cfd178 100644
    },
 
    'configurations': {
-@@ -181,13 +173,13 @@
+@@ -192,13 +192,13 @@
    },
 
    'include_dirs': [
@@ -242,22 +238,16 @@ index 24ededb..0cfd178 100644
    ],
    'library_dirs': [
      '<(qt_loc)/lib',
-@@ -208,11 +208,17 @@
+@@ -219,11 +219,8 @@
          '<(qt_loc)/plugins/platforminputcontexts',
        ],
        'libraries': [
 -        '<(linux_path_xkbcommon)/lib/libxkbcommon.a',
-+        'xkbcommon',
          '<@(qt_libs_release)',
-         '<(linux_lib_ssl)',
-         '<(linux_lib_crypto)',
-         '<!@(python -c "for s in \'<(linux_lib_icu)\'.split(\' \'): print(s)")',
-+        'Qt5PrintSupport',
-+        'Qt5PlatformSupport',
-+        'Qt5Network',
-+        'Qt5Widgets',
-+        'Qt5Gui',
-+        'Qt5Core',
+-        '<(linux_lib_ssl)',
+-        '<(linux_lib_crypto)',
+-        '<!@(python -c "for s in \'<(linux_lib_icu)\'.split(\' \'): print(s)")',
++        'crypto',
          'xcb',
          'X11',
          'X11-xcb',
@@ -275,19 +265,17 @@ index 24ededb..0cfd178 100644
          '-g',
          '-rdynamic',
 diff --git a/Telegram/gyp/settings_linux.gypi b/Telegram/gyp/settings_linux.gypi
-index 3356b97..20b4732 100644
 --- a/Telegram/gyp/settings_linux.gypi
 +++ b/Telegram/gyp/settings_linux.gypi
-@@ -60,7 +60,6 @@
+@@ -61,7 +61,6 @@
        ],
        'defines': [
          '_REENTRANT',
 -        'QT_STATICPLUGIN',
          'QT_PLUGIN',
        ],
-       'cflags': [
+       'cflags_c': [
 diff --git a/Telegram/gyp/telegram_linux.gypi b/Telegram/gyp/telegram_linux.gypi
-index b42e744..29386a9 100644
 --- a/Telegram/gyp/telegram_linux.gypi
 +++ b/Telegram/gyp/telegram_linux.gypi
 @@ -48,26 +48,25 @@
@@ -334,4 +322,3 @@ index b42e744..29386a9 100644
  #      '<!(pkg-config 2> /dev/null --libs <@(pkgconfig_libs))',
      ],
      'cflags_cc': [
-
