@@ -1,22 +1,21 @@
 {
-    "id": "org.telegram.TelegramDesktopDevel",
+    "id": "org.telegram.desktop",
     "branch": "master",
     "runtime": "org.kde.Platform",
     "runtime-version": "master",
     "sdk": "org.kde.Sdk",
     "command": "telegram-desktop",
-    "rename-desktop-file": "telegram-desktop.desktop",
-    "rename-appdata-file": "telegram-desktop.appdata.xml",
+    "rename-desktop-file": "telegramdesktop.desktop",
+    "rename-appdata-file": "telegramdesktop.appdata.xml",
     "rename-icon": "telegram-desktop",
-    "tags": ["nightly"],
-    "desktop-file-name-prefix": "(Nightly) ",
     "writable-sdk": true,
     "finish-args": [ "--share=ipc",
                      "--share=network",
                      "--socket=x11",
                      "--socket=pulseaudio",
                      "--socket=session-bus",
-                     "--filesystem=host",
+                     "--filesystem=home",
+                     "--filesystem=/tmp", /* To access socket to avoid multiple instances */
                      "--device=dri" ],
     "cleanup": [ "/cache",
                  "/man",
@@ -282,6 +281,7 @@
                 {
                     "type": "archive",
                     "url": "http://downloads.xiph.org/releases/opus/opus-1.1.tar.gz",
+                    /* Version 1.0.27 + one commit ahead adding appstream metadata */
                     "sha256": "b9727015a58affcf3db527322bf8c4d2fcf39f5f6b8f15dbceca20206cbe1d95"
                 }
             ]
@@ -388,23 +388,13 @@
                 "install -m755 \"out/Release/Telegram\" \"/app/bin/telegram-desktop\"",
 
                 "install -d \"/app/share/applications\"",
-                "install -m644 \"lib/xdg/telegramdesktop.desktop\" \"/app/share/applications/telegram-desktop.desktop\"",
+                "install -m644 \"lib/xdg/telegramdesktop.desktop\" \"/app/share/applications/telegramdesktop.desktop\"",
 
                 "install -d \"/app/share/appdata\"",
-                "install -m644 \"lib/xdg/telegramdesktop.appdata.xml\" \"/app/share/appdata/telegram-desktop.appdata.xml\"",
+                "install -m644 \"lib/xdg/telegramdesktop.appdata.xml\" \"/app/share/appdata/telegramdesktop.appdata.xml\"",
 
                 "install -d \"/app/share/kservices5\"",
-                "echo \"[Protocol]
-                        exec=telegram-desktop -- %u
-                        protocol=tg
-                        input=none
-                        output=none
-                        helper=true
-                        listing=false
-                        reading=false
-                        writing=false
-                        makedir=false
-                        deleting=false\" > /app/share/kservices5/tg.protocol",
+                "install -m644 \"lib/xdg/tg.protocol\" \"/app/share/kservices5/tg.protocol\"",
 
                 "for icon_size in 16 32 48 64 128 256 512; do
                      install -d \"/app/share/icons/hicolor/${icon_size}x${icon_size}/apps\"
@@ -414,7 +404,8 @@
             "sources": [
                 {
                     "type": "git",
-                    "url": "https://github.com/telegramdesktop/tdesktop.git"
+                    "url": "https://github.com/telegramdesktop/tdesktop.git",
+                    "branch": "v1.0.29"
                 },
                 {
                     "type": "patch",
