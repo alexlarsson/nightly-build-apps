@@ -8,7 +8,6 @@
     "rename-desktop-file": "telegramdesktop.desktop",
     "rename-appdata-file": "telegramdesktop.appdata.xml",
     "rename-icon": "telegram-desktop",
-    "writable-sdk": true,
     "finish-args": [ "--share=ipc",
                      "--share=network",
                      "--socket=x11",
@@ -22,16 +21,6 @@
                  "/share/man",
                  "/lib/systemd",
                  "*.la", "*.a"],
-    "cleanup-commands": [ "touch -d @0 /usr/share/fonts",
-                          "touch -d @0 /usr/share/fonts/*",
-                          "fc-cache -fs"
-                        ],
-    "cleanup-platform": [ "/include",
-                          "/share/aclocal",
-                          "/share/pkgconfig",
-                          "/lib/pkgconfig",
-                          "*.a"
-                        ],
     "build-options" : {
         "cflags": "-O2 -g -Wno-deprecated-declarations -fstack-protector-strong -D_FORTIFY_SOURCE=2",
         "cxxflags": "-O2 -g -Wno-deprecated-declarations -fstack-protector-strong -D_FORTIFY_SOURCE=2",
@@ -136,7 +125,11 @@
         {
             "name": "librsvg",
             "config-opts": ["--disable-static"],
-            "ensure-writable": ["/lib/gdk-pixbuf-2.0/*/loaders.cache"],
+            "build-options" : {
+                "env": {
+                    "PKG_CONFIG_GDK_PIXBUF_2_0_GDK_PIXBUF_BINARYDIR": "/app/lib/gdk-pixbuf-2.0/2.10.0"
+                }
+            },
             "sources": [
                 {
                     "type": "archive",
@@ -220,6 +213,7 @@
         },
         {
             "name": "dee",
+            "config-opts": ["--enable-maintainer-flags=no"],
             "sources": [
                 {
                     "type": "archive",
@@ -367,7 +361,7 @@
                 {
                     "type": "shell",
                     "commands": [
-                        "python2 setup.py install"
+                        "python2 setup.py install --prefix=/app"
                     ]
                 },
                 {
