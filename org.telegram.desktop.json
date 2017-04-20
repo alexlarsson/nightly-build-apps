@@ -442,6 +442,7 @@
                 {
                     "type": "shell",
                     "commands": [
+                        "sed -i s/org.telegram.desktop/org.telegram.desktop.desktop/ lib/xdg/telegramdesktop.appdata.xml",
                         "echo '# Empty makefile\n\nall:\n\techo \"Using an empty makefile doing nothing\"\n\ninstall:\n\techo \"Using an empty makefile doing nothing\"' > Makefile"
                     ]
                 },
