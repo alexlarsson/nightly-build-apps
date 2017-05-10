@@ -1,6 +1,6 @@
 {
     "id": "org.telegram.desktop",
-    "branch": "master",
+    "branch": "devel",
     "runtime": "org.kde.Platform",
     "runtime-version": "master",
     "sdk": "org.kde.Sdk",
@@ -8,6 +8,8 @@
     "rename-desktop-file": "telegramdesktop.desktop",
     "rename-appdata-file": "telegramdesktop.appdata.xml",
     "rename-icon": "telegram-desktop",
+    "desktop-file-name-prefix": "(Development) ",
+    "tags": ["development"],
     "finish-args": [ "--share=ipc",
                      "--share=network",
                      "--socket=x11",
@@ -405,35 +407,35 @@
                 {
                     "type": "git",
                     "url": "https://github.com/telegramdesktop/tdesktop.git",
-                    "branch": "v1.0.29"
+                    "branch": "v1.0.37"
                 },
                 {
                     "type": "patch",
-                    "path": "patches/telegram/Avoid-depending-on-static-libraries.patch"
+                    "path": "patches/telegram-devel/Avoid-depending-on-static-libraries.patch"
                 },
                 {
                     "type": "patch",
-                    "path": "patches/telegram/Downgrade-Qt-version.patch"
+                    "path": "patches/telegram-devel/Downgrade-Qt-version.patch"
                 },
                 {
                     "type": "patch",
-                    "path": "patches/telegram/Fix-rcc-path.patch"
+                    "path": "patches/telegram-devel/Fix-rcc-path.patch"
                 },
                 {
                     "type": "patch",
-                    "path": "patches/telegram/Flags-for-precompiled-header-and-MOC.patch"
+                    "path": "patches/telegram-devel/Flags-for-precompiled-header-and-MOC.patch"
                 },
                 {
                     "type": "patch",
-                    "path": "patches/telegram/Remove-Werror-flag.patch"
+                    "path": "patches/telegram-devel/Remove-Werror-flag.patch"
                 },
                 {
                     "type": "patch",
-                    "path": "patches/telegram/Use-gtk3-headers.patch"
+                    "path": "patches/telegram-devel/Use-gtk3-headers.patch"
                 },
                 {
                     "type": "file",
-                    "path": "patches/telegram/CMakeLists.inj"
+                    "path": "patches/telegram-devel/CMakeLists.inj"
                 },
                 {
                     "type": "shell",
