@@ -1,15 +1,11 @@
-Description: Eliminates dependencies from static Qt and other libraries
-Author: Nicholas Guriev <guriev-ns@ya.ru>
-Last-Update: 2017-03-31
-
 diff --git a/Telegram/SourceFiles/main.cpp b/Telegram/SourceFiles/main.cpp
-index 0c31e9b..a74129c 100644
+index 6cd942e..d720d61 100644
 --- a/Telegram/SourceFiles/main.cpp
 +++ b/Telegram/SourceFiles/main.cpp
-@@ -41,6 +41,9 @@ int main(int argc, char *argv[]) {
- #endif // !TDESKTOP_DISABLE_CRASH_REPORTS
+@@ -35,6 +35,9 @@ int main(int argc, char *argv[]) {
+ 		return psCleanup();
  	}
-
+ 
 +	// I don't know why path is not in QT_PLUGIN_PATH by default
 +	QCoreApplication::addLibraryPath("/usr/lib/plugins");
 +
@@ -17,6 +13,7 @@ index 0c31e9b..a74129c 100644
  	Logs::start(); // must be started before Platform is started
  	Platform::start(); // must be started before QApplication is created
 diff --git a/Telegram/SourceFiles/qt_static_plugins.cpp b/Telegram/SourceFiles/qt_static_plugins.cpp
+index 1d4896a..f2f876b 100644
 --- a/Telegram/SourceFiles/qt_static_plugins.cpp
 +++ b/Telegram/SourceFiles/qt_static_plugins.cpp
 @@ -28,12 +28,4 @@ Q_IMPORT_PLUGIN(QWebpPlugin)
@@ -38,7 +35,7 @@ index e7f5b54..fe92aed 100644
 +++ b/Telegram/SourceFiles/stdafx.cpp
 @@ -21,3 +21,67 @@ Copyright (c) 2014-2017 John Preston, https://desktop.telegram.org
  #include "stdafx.h"
-
+ 
  // Precompiled header helper.
 +
 +/* This file contains some code from Qt source to ensure successful build.
@@ -105,31 +102,32 @@ index e7f5b54..fe92aed 100644
 +        flags |= QTextItem::StrikeOut;
 +}
 diff --git a/Telegram/SourceFiles/ui/text/text_block.cpp b/Telegram/SourceFiles/ui/text/text_block.cpp
+index f89644e..35230cf 100644
 --- a/Telegram/SourceFiles/ui/text/text_block.cpp
 +++ b/Telegram/SourceFiles/ui/text/text_block.cpp
 @@ -330,7 +330,7 @@ TextBlock::TextBlock(const style::font &font, const QString &str, QFixed minResi
  		SignalHandlers::setCrashAnnotationRef("CrashString", &part);
-
+ 
  		QStackTextEngine engine(part, blockFont->f);
 -		QTextLayout layout(&engine);
 +		QTextLayout layout(part, blockFont->f);
  		layout.beginLayout();
  		layout.createLine();
-
+ 
 diff --git a/Telegram/gyp/Telegram.gyp b/Telegram/gyp/Telegram.gyp
-index 2503f1e..92415ea 100644
+index 80160d1..bd5dd44 100644
 --- a/Telegram/gyp/Telegram.gyp
 +++ b/Telegram/gyp/Telegram.gyp
-@@ -81,17 +81,15 @@
-     'defines': [
-       'AL_LIBTYPE_STATIC',
+@@ -87,17 +87,15 @@
+       'AL_ALEXT_PROTOTYPES',
+       'TGVOIP_USE_CXX11_LIB',
        '<!@(python -c "for s in \'<(build_defines)\'.split(\',\'): print(s)")',
 +      '__STDC_FORMAT_MACROS', 'TDESKTOP_DISABLE_AUTOUPDATE',
 +      'TDESKTOP_DISABLE_CRASH_REPORTS',
 +      'TDESKTOP_DISABLE_REGISTER_CUSTOM_SCHEME',
 +      'TDESKTOP_DISABLE_UNITY_INTEGRATION',
      ],
-
+ 
      'include_dirs': [
        '<(src_loc)',
        '<(SHARED_INTERMEDIATE_DIR)',
@@ -139,10 +137,11 @@ index 2503f1e..92415ea 100644
 -      '<(libs_loc)/zlib-1.2.8',
 -      '<(libs_loc)/ffmpeg',
 -      '<(libs_loc)/openal-soft/include',
+       '<(libs_loc)/opus/include',
        '<(minizip_loc)',
        '<(sp_media_key_tap_loc)',
-     ],
 diff --git a/Telegram/gyp/qt.gypi b/Telegram/gyp/qt.gypi
+index 81c13a1..0477f03 100644
 --- a/Telegram/gyp/qt.gypi
 +++ b/Telegram/gyp/qt.gypi
 @@ -27,25 +27,22 @@
@@ -196,7 +195,7 @@ diff --git a/Telegram/gyp/qt.gypi b/Telegram/gyp/qt.gypi
                'Xi',
                'Xext',
                'Xfixes',
-@@ -109,7 +101,6 @@
+@@ -110,7 +102,6 @@
                'xcb-shm',
                'xcb-xfixes',
                'xcb-render',
@@ -204,9 +203,9 @@ diff --git a/Telegram/gyp/qt.gypi b/Telegram/gyp/qt.gypi
              ],
            }],
          ],
-@@ -141,9 +141,9 @@
+@@ -142,9 +133,9 @@
      'qt_moc_list_sources_arg': '--moc-prefix SHARED_INTERMEDIATE_DIR/<(_target_name)/moc/moc_',
-
+ 
      'linux_path_xkbcommon%': '/usr/local',
 -    'linux_lib_ssl%': '/usr/local/ssl/lib/libssl.a',
 -    'linux_lib_crypto%': '/usr/local/ssl/lib/libcrypto.a',
@@ -215,11 +214,11 @@ diff --git a/Telegram/gyp/qt.gypi b/Telegram/gyp/qt.gypi
 +    'linux_lib_crypto%': 'crypto',
 +    'linux_lib_icu%': 'icutu icui18n icuuc icudata',
    },
-
+ 
    'configurations': {
-@@ -192,13 +192,13 @@
+@@ -193,13 +184,13 @@
    },
-
+ 
    'include_dirs': [
 -    '<(qt_loc)/include',
 -    '<(qt_loc)/include/QtCore',
@@ -238,7 +237,7 @@ diff --git a/Telegram/gyp/qt.gypi b/Telegram/gyp/qt.gypi
    ],
    'library_dirs': [
      '<(qt_loc)/lib',
-@@ -219,11 +219,8 @@
+@@ -220,11 +211,8 @@
          '<(qt_loc)/plugins/platforminputcontexts',
        ],
        'libraries': [
@@ -251,11 +250,12 @@ diff --git a/Telegram/gyp/qt.gypi b/Telegram/gyp/qt.gypi
          'xcb',
          'X11',
          'X11-xcb',
-@@ -223,10 +229,10 @@
+@@ -235,10 +223,11 @@
          'pthread',
        ],
        'include_dirs': [
 -        '<(qt_loc)/mkspecs/linux-g++',
++        '/app/include/opus',
 +        '/usr/lib/mkspecs/linux-g++',
 +        '/usr/include/QtCore'
        ],
@@ -265,6 +265,7 @@ diff --git a/Telegram/gyp/qt.gypi b/Telegram/gyp/qt.gypi
          '-g',
          '-rdynamic',
 diff --git a/Telegram/gyp/settings_linux.gypi b/Telegram/gyp/settings_linux.gypi
+index fde88dc..39e7634 100644
 --- a/Telegram/gyp/settings_linux.gypi
 +++ b/Telegram/gyp/settings_linux.gypi
 @@ -61,7 +61,6 @@
@@ -276,6 +277,7 @@ diff --git a/Telegram/gyp/settings_linux.gypi b/Telegram/gyp/settings_linux.gypi
        ],
        'cflags_c': [
 diff --git a/Telegram/gyp/telegram_linux.gypi b/Telegram/gyp/telegram_linux.gypi
+index b42e744..c726b30 100644
 --- a/Telegram/gyp/telegram_linux.gypi
 +++ b/Telegram/gyp/telegram_linux.gypi
 @@ -48,26 +48,25 @@
@@ -322,3 +324,15 @@ diff --git a/Telegram/gyp/telegram_linux.gypi b/Telegram/gyp/telegram_linux.gypi
  #      '<!(pkg-config 2> /dev/null --libs <@(pkgconfig_libs))',
      ],
      'cflags_cc': [
+diff --git a/Telegram/ThirdParty/libtgvoip/libtgvoip.gyp b/Telegram/ThirdParty/libtgvoip/libtgvoip.gyp
+index 91697a2..069f60d 100644
+--- a/Telegram/ThirdParty/libtgvoip/libtgvoip.gyp
++++ b/Telegram/ThirdParty/libtgvoip/libtgvoip.gyp
+@@ -18,6 +18,7 @@
+         'include_dirs': [
+           '<(tgvoip_src_loc)/webrtc_dsp',
+           '<(linux_path_opus_include)',
++          '/app/include/opus',
+         ],
+         'direct_dependent_settings': {
+           'include_dirs': [
