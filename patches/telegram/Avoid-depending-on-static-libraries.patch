@@ -13,10 +13,10 @@ index 6cd942e..d720d61 100644
  	Logs::start(); // must be started before Platform is started
  	Platform::start(); // must be started before QApplication is created
 diff --git a/Telegram/SourceFiles/qt_static_plugins.cpp b/Telegram/SourceFiles/qt_static_plugins.cpp
-index 1d4896a..f2f876b 100644
+index b975c7a8..f2f876b3 100644
 --- a/Telegram/SourceFiles/qt_static_plugins.cpp
 +++ b/Telegram/SourceFiles/qt_static_plugins.cpp
-@@ -28,12 +28,4 @@ Q_IMPORT_PLUGIN(QWebpPlugin)
+@@ -28,13 +28,4 @@ Q_IMPORT_PLUGIN(QWebpPlugin)
  Q_IMPORT_PLUGIN(QCocoaIntegrationPlugin)
  Q_IMPORT_PLUGIN(QGenericEnginePlugin)
  #elif defined Q_OS_LINUX // Q_OS_WIN | Q_OS_MAC
@@ -28,6 +28,7 @@ index 1d4896a..f2f876b 100644
 -Q_IMPORT_PLUGIN(QComposePlatformInputContextPlugin)
 -Q_IMPORT_PLUGIN(QIbusPlatformInputContextPlugin)
 -Q_IMPORT_PLUGIN(QFcitxPlatformInputContextPlugin)
+-Q_IMPORT_PLUGIN(QHimePlatformInputContextPlugin)
  #endif // Q_OS_WIN | Q_OS_MAC | Q_OS_LINUX
 diff --git a/Telegram/SourceFiles/stdafx.cpp b/Telegram/SourceFiles/stdafx.cpp
 index e7f5b54..fe92aed 100644
@@ -277,10 +278,10 @@ index fde88dc..39e7634 100644
        ],
        'cflags_c': [
 diff --git a/Telegram/gyp/telegram_linux.gypi b/Telegram/gyp/telegram_linux.gypi
-index b42e744..c726b30 100644
+index 2c464928..ecd67b5f 100644
 --- a/Telegram/gyp/telegram_linux.gypi
 +++ b/Telegram/gyp/telegram_linux.gypi
-@@ -48,26 +48,25 @@
+@@ -50,27 +50,25 @@
        '<(linux_path_va)/lib',
        '<(linux_path_vdpau)/lib',
        '<(linux_path_breakpad)/lib',
@@ -292,6 +293,7 @@ index b42e744..c726b30 100644
 -      'composeplatforminputcontextplugin',
 -      'ibusplatforminputcontextplugin',
 -      'fcitxplatforminputcontextplugin',
+-      'himeplatforminputcontextplugin',
 -      'liblzma.a',
 -      'libopenal.a',
 -      'libavformat.a',

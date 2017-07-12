@@ -2,7 +2,7 @@
     "id": "org.telegram.desktop",
     "branch": "devel",
     "runtime": "org.kde.Platform",
-    "runtime-version": "master",
+    "runtime-version": "5.9",
     "sdk": "org.kde.Sdk",
     "command": "telegram-desktop",
     "rename-desktop-file": "telegramdesktop.desktop",
@@ -17,9 +17,6 @@
                      "--filesystem=home",
                      "--filesystem=/tmp", /* To access socket to avoid multiple instances */
                      "--talk-name=org.kde.StatusNotifierWatcher",
-                     /* This will get removed with KNotifications 5.35 */
-                     "--own-name=org.kde.StatusNotifierItem-2-1",
-                     "--own-name=org.kde.StatusNotifierItem-3-1",
                      "--env=QT_QPA_PLATFORM=flatpak",
                      "--device=dri" ],
     "cleanup": [ "/cache",
@@ -36,20 +33,6 @@
         }
     },
     "modules": [
-        {
-            "name": "google-breakpad",
-            "sources": [
-                {
-                    "type": "git",
-                    "url": "https://chromium.googlesource.com/breakpad/breakpad"
-                },
-                {
-                    "type": "git",
-                    "url": "https://chromium.googlesource.com/linux-syscall-support",
-                    "dest": "src/third_party/lss"
-                }
-            ]
-        },
         {
             "name": "libdbusmenu",
             "config-opts": [ "--with-gtk=3", "-disable-static", "--disable-tests", "--disable-gtk-doc", "--disable-doc", "--disable-dumper", "--enable-introspection=no", "--disable-vala"],
@@ -143,8 +126,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://github.com/01org/libva/releases/download/1.8.1/libva-1.8.1.tar.bz2",
-                    "sha256": "c1d5d85b6b40b76f37993b4da33388d3d73b64998dcbc160b7578e24ed775c73"
+                    "url": "https://github.com/01org/libva/releases/download/1.8.2/libva-1.8.2.tar.bz2",
+                    "sha256": "9ed3e3ddc8f47a715d4c6ec366beb21c83fc4e8a3d4d39a811baff76f0a0cede"
                 }
             ]
         },
@@ -153,9 +136,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "http://downloads.xiph.org/releases/opus/opus-1.1.tar.gz",
-                    /* Version 1.0.27 + one commit ahead adding appstream metadata */
-                    "sha256": "b9727015a58affcf3db527322bf8c4d2fcf39f5f6b8f15dbceca20206cbe1d95"
+                    "url": "https://archive.mozilla.org/pub/opus/opus-1.2.tar.gz",
+                    "sha256": "77db45a87b51578fbc49555ef1b10926179861d854eb2613207dc79d9ec0a9a9"
                 }
             ]
         },
@@ -223,9 +205,9 @@
             ],
             "sources": [
                 {
-                    "type": "git",
-                    "url": "https://github.com/FFmpeg/FFmpeg.git",
-                    "branch": "release/3.3"
+                    "type": "archive",
+                    "url": "https://github.com/FFmpeg/FFmpeg/archive/n3.3.2.tar.gz",
+                    "sha256": "823706ca36c1cce60926eeaca670321deb86a0f342f60b5168a8aaf6c5bf0d6b"
                 }
             ]
         },
@@ -278,7 +260,7 @@
                 {
                     "type": "git",
                     "url": "https://github.com/telegramdesktop/tdesktop.git",
-                    "branch": "v1.1.7"
+                    "branch": "v1.1.12"
                 },
                 {
                     "type": "patch",
